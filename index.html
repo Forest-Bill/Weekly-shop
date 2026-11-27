@@ -42,9 +42,6 @@ a.s{display:inline-block;text-decoration:none;border:1px solid var(--bd);border-
 #scan video{width:100%;max-width:520px;border-radius:12px;background:#111}
 #scanAsk{display:flex;gap:8px;width:100%;max-width:520px}
 #scanAsk.hide{display:none}
-#ocr{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px}
-#ocr.hide{display:none}
-#ocr .card{width:100%;max-width:520px;margin:0}
 .tag{font-size:12px;color:var(--mut)}
 .mut{color:var(--mut);font-size:14px}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
@@ -58,7 +55,7 @@ small.ing{display:block;color:var(--mut);font-size:13px}
 <div id="msg" class="mut" style="margin-bottom:8px"></div>
 <section id="v-list">
   <div class="add"><input type="text" id="newItem" placeholder="Add an item…" autocomplete="off"><button class="p" id="addItem">Add</button></div>
-  <div class="acts"><button class="s" id="build">Build from week plan</button><button class="s" id="scanBtn">📷 Scan barcode</button><button class="s" id="ocrBtn">✍️ Scan handwriting</button><input type="file" id="ocrFile" accept="image/*" class="hide"><a class="s off" id="wa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a><button class="s" id="tickAll">Tick all</button><button class="s" id="clearDone">Clear ticked</button><button class="s" id="clearAll">New week</button></div>
+  <div class="acts"><button class="s" id="build">Build from week plan</button><button class="s" id="scanBtn">📷 Scan barcode</button><a class="s off" id="wa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a><button class="s" id="tickAll">Tick all</button><button class="s" id="clearDone">Clear ticked</button><button class="s" id="clearAll">New week</button></div>
   <div class="card" id="items"></div>
 </section>
 <section id="v-rec" class="hide">
@@ -66,7 +63,7 @@ small.ing{display:block;color:var(--mut);font-size:13px}
     <b>Import from a link</b>
     <p class="mut" style="margin:4px 0 8px">Paste a recipe web address and the ingredients are added as a new recipe.</p>
     <input type="text" id="urlIn" placeholder="https://…" autocapitalize="off" autocorrect="off" style="margin-bottom:8px">
-    <button class="p" id="urlBtn">Import recipe</button>
+    <button class="p" id="urlBtn">Import recipe</button><button class="s" id="urlClear" style="margin-left:8px">Clear</button>
   </div>
   <div class="card">
     <input type="text" id="rName" placeholder="Recipe name" style="margin-bottom:8px">
@@ -96,12 +93,6 @@ small.ing{display:block;color:var(--mut);font-size:13px}
   <div id="scanAsk" class="hide"><input type="text" id="scanName" placeholder="Item name"><button class="p" id="scanAdd">Add</button></div>
   <button class="s" id="scanCancel" style="color:#fff;border-color:#888">Cancel</button>
 </div>
-<div id="ocr" class="hide"><div class="card">
-  <b>Check the items</b>
-  <p class="mut" style="margin:4px 0 8px">One item per line. Fix any mistakes, then add them to your list.</p>
-  <textarea id="ocrTxt" style="min-height:180px"></textarea>
-  <div class="acts" style="margin:10px 0 0"><button class="p" id="ocrAdd">Add to list</button><button class="s" id="ocrCancel">Cancel</button></div>
-</div></div>
 <nav>
   <button data-v="list" class="on">🛒 List</button>
   <button data-v="rec">🍲 Recipes</button>
@@ -362,59 +353,7 @@ $('urlBtn').onclick=async()=>{
   }catch(e){say((e&&e.message||'Import failed.')+' You can paste the ingredients into the form below instead.')}
   finally{b.disabled=false;b.textContent='Import recipe'}
 };
-let tessP=null;
-const loadTess=()=>tessP||(tessP=new Promise((ok,no)=>{
-  if(window.Tesseract)return ok();
-  const sc=document.createElement('script');
-  sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
-  sc.onload=ok;sc.onerror=()=>{tessP=null;no(new Error('Could not load the text reader. Check your connection.'))};
-  document.head.appendChild(sc);
-}));
-function prepImage(file){
-  return new Promise((ok,no)=>{
-    const img=new Image(),url=URL.createObjectURL(file);
-    img.onload=()=>{
-      const k=Math.min(1,1800/Math.max(img.width,img.height));
-      const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
-      const g=c.getContext('2d');g.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);
-      const d=g.getImageData(0,0,c.width,c.height),p=d.data;
-      for(let i=0;i<p.length;i+=4){
-        const v=Math.max(0,Math.min(255,((p[i]*0.3+p[i+1]*0.59+p[i+2]*0.11)-128)*1.5+128));
-        p[i]=p[i+1]=p[i+2]=v;
-      }
-      g.putImageData(d,0,0);
-      c.toBlob(b=>b?ok(b):no(new Error('Could not read the photo.')),'image/png');
-    };
-    img.onerror=()=>{URL.revokeObjectURL(url);no(new Error('Could not open that photo.'))};
-    img.src=url;
-  });
-}
-const cleanLines=t=>t.split(/\n+/)
-  .map(l=>l.replace(/^[\s\-–—•*·]+/,'').replace(/^\d+[.)]\s+/,'').replace(/[^\p{L}\p{N}\s&'’\-\/%.,()]/gu,'').replace(/\s+/g,' ').trim())
-  .filter(l=>l.length>1&&/\p{L}{2}/u.test(l));
-$('ocrBtn').onclick=()=>$('ocrFile').click();
-$('ocrCancel').onclick=()=>$('ocr').classList.add('hide');
-$('ocrAdd').onclick=async()=>{
-  const lines=$('ocrTxt').value.split(/\n+/).map(l=>l.trim()).filter(Boolean);
-  $('ocr').classList.add('hide');
-  if(!lines.length)return;
-  const n=await addItems(lines.map(l=>[l,'manual']));
-  say(n?'Added '+n+' item'+(n>1?'s':'')+'.':'Those items are already on the list.');
-};
-$('ocrFile').onchange=async e=>{
-  const f=e.target.files[0];e.target.value='';if(!f)return;
-  const b=$('ocrBtn');b.disabled=true;say('Loading text reader… (first time can take a minute)');
-  try{
-    await loadTess();
-    const blob=await prepImage(f);
-    const worker=await Tesseract.createWorker('eng',1,{logger:m=>{if(m.status==='recognizing text')say('Reading… '+Math.round((m.progress||0)*100)+'%')}});
-    const r=await worker.recognize(blob);await worker.terminate();
-    const lines=cleanLines(r.data.text||'');
-    if(!lines.length){say('Couldn’t find any writing. Try a clearer photo in good light, dark pen on plain paper.');return}
-    $('ocrTxt').value=lines.join('\n');$('ocr').classList.remove('hide');say('');
-  }catch(err){say((err&&err.message)||'Couldn’t read that photo.')}
-  finally{b.disabled=false}
-};
+$('urlClear').onclick=()=>{$('urlIn').value='';say('');$('urlIn').focus()};
 $('build').onclick=()=>w(async()=>{
   let skipped=0;const list=S.staples.map(s=>[s.name,'staple']);
   for(const rc of S.recipes.filter(r=>r.inWeek))for(const g of rc.ingredients||[]){if(PANTRY(g))skipped++;else list.push([g,rc.name])}
