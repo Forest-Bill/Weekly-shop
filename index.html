@@ -37,6 +37,11 @@ input[type=checkbox]{width:22px;height:22px;accent-color:var(--ac)}
 .cat:first-child{padding-top:2px}
 a.s{display:inline-block;text-decoration:none;border:1px solid var(--bd);border-radius:10px;padding:11px 14px;font-weight:600;color:var(--ac)}
 .off{opacity:.45;pointer-events:none}
+#scan{position:fixed;inset:0;z-index:50;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
+#scan.hide{display:none}
+#scan video{width:100%;max-width:520px;border-radius:12px;background:#111}
+#scanAsk{display:flex;gap:8px;width:100%;max-width:520px}
+#scanAsk.hide{display:none}
 .tag{font-size:12px;color:var(--mut)}
 .mut{color:var(--mut);font-size:14px}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
@@ -50,7 +55,7 @@ small.ing{display:block;color:var(--mut);font-size:13px}
 <div id="msg" class="mut" style="margin-bottom:8px"></div>
 <section id="v-list">
   <div class="add"><input type="text" id="newItem" placeholder="Add an item…" autocomplete="off"><button class="p" id="addItem">Add</button></div>
-  <div class="acts"><button class="s" id="build">Build from week plan</button><a class="s off" id="wa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a><button class="s" id="tickAll">Tick all</button><button class="s" id="clearDone">Clear ticked</button><button class="s" id="clearAll">New week</button></div>
+  <div class="acts"><button class="s" id="build">Build from week plan</button><button class="s" id="scanBtn">📷 Scan barcode</button><a class="s off" id="wa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a><button class="s" id="tickAll">Tick all</button><button class="s" id="clearDone">Clear ticked</button><button class="s" id="clearAll">New week</button></div>
   <div class="card" id="items"></div>
 </section>
 <section id="v-rec" class="hide">
@@ -76,6 +81,12 @@ small.ing{display:block;color:var(--mut);font-size:13px}
   </div>
 </section>
 </main>
+<div id="scan" class="hide">
+  <div id="scanMsg">Starting camera…</div>
+  <video id="scanVid" playsinline muted autoplay></video>
+  <div id="scanAsk" class="hide"><input type="text" id="scanName" placeholder="Item name"><button class="p" id="scanAdd">Add</button></div>
+  <button class="s" id="scanCancel" style="color:#fff;border-color:#888">Cancel</button>
+</div>
 <nav>
   <button data-v="list" class="on">🛒 List</button>
   <button data-v="rec">🍲 Recipes</button>
@@ -242,6 +253,56 @@ const updateWa=()=>{
   for(const c of CATS){if(!g[c])continue;t+='\n*'+c+'*\n'+g[c].sort().map(n=>'• '+n).join('\n')+'\n'}
   t=t.trim();
   a.href='https://wa.me/?text='+encodeURIComponent(t);a.classList.remove('off');
+};
+let zxP=null,rdr=null,pendingCode=null;
+const loadZX=()=>zxP||(zxP=new Promise((ok,no)=>{
+  if(window.ZXing)return ok();
+  const sc=document.createElement('script');
+  sc.src='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+  sc.onload=ok;sc.onerror=()=>{zxP=null;no(new Error('Could not load the scanner. Check your connection.'))};
+  document.head.appendChild(sc);
+}));
+const BC='weekly-shop-barcodes';
+const bcMap=()=>{try{return JSON.parse(localStorage.getItem(BC)||'{}')}catch(e){return{}}};
+function stopScan(){try{rdr&&rdr.reset()}catch(e){}rdr=null;$('scan').classList.add('hide')}
+async function lookup(code){
+  const m=bcMap();if(m[code])return m[code];
+  try{
+    const r=await fetch('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,brands');
+    const j=await r.json();
+    if(j&&j.status===1&&j.product&&j.product.product_name){
+      const b=(j.product.brands||'').split(',')[0].trim(),n=j.product.product_name.trim();
+      return b&&!n.toLowerCase().startsWith(b.toLowerCase())?b+' '+n:n;
+    }
+  }catch(e){}
+  return null;
+}
+async function addScanned(code,name){
+  const m=bcMap();m[code]=name;try{localStorage.setItem(BC,JSON.stringify(m))}catch(e){}
+  const n=await addItems([[name,'manual']]);stopScan();
+  say(n?'Added “'+name+'”.':'“'+name+'” is already on the list.');
+}
+$('scanCancel').onclick=stopScan;
+$('scanAdd').onclick=()=>{const n=$('scanName').value.trim();if(n&&pendingCode){$('scanName').value='';addScanned(pendingCode,n)}};
+$('scanBtn').onclick=async()=>{
+  $('scan').classList.remove('hide');$('scanAsk').classList.add('hide');$('scanMsg').textContent='Starting camera…';
+  try{
+    await loadZX();
+    const h=new Map();
+    h.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E]);
+    rdr=new ZXing.BrowserMultiFormatReader(h);let busy=false;
+    $('scanMsg').textContent='Point the camera at the barcode';
+    await rdr.decodeFromConstraints({video:{facingMode:'environment'}},$('scanVid'),async res=>{
+      if(!res||busy)return;busy=true;
+      const code=res.getText();
+      $('scanMsg').textContent='Looking up '+code+'…';
+      try{rdr.reset()}catch(e){}
+      const name=await lookup(code);
+      if(name)return addScanned(code,name);
+      pendingCode=code;$('scanMsg').textContent='Barcode '+code+' not found. Type the name:';
+      $('scanAsk').classList.remove('hide');$('scanName').focus();
+    });
+  }catch(e){$('scanMsg').textContent='Couldn’t start the camera: '+(e&&e.message||'permission denied')+'. Tap Cancel and type the item instead.'}
 };
 $('build').onclick=()=>w(async()=>{
   let skipped=0;const list=S.staples.map(s=>[s.name,'staple']);
