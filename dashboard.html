@@ -77,27 +77,50 @@ body{background:var(--bg);color:var(--tx);font:17px/1.35 -apple-system,system-ui
 button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;min-width:56px;min-height:52px;padding:0 14px;-webkit-tap-highlight-color:transparent}
 button.on,button.p{background:var(--ac);color:var(--acx);border-color:var(--ac);font-weight:600}
 #panes{flex:1 1 auto;min-height:0;display:flex;flex-direction:row}
-#cal{flex:3 1 0px;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px;min-height:0;min-width:0}
+#cal{flex:3 1 0px;overflow:hidden;padding:10px;min-height:0;min-width:0;display:flex;flex-direction:column}
 #shopp{flex:2 1 0px;position:relative;min-height:0;min-width:0;border-left:1px solid var(--bd)}
 @media(orientation:portrait){#panes{flex-direction:column}#cal,#shopp{flex:1 1 0px}#shopp{border-left:0;border-top:1px solid var(--bd)}}
 #panes.cal #shopp,#panes.shop #cal{display:none}
 #panes.cal #cal,#panes.shop #shopp{flex:1 1 0px}
 iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;background:var(--bg)}
-#msg{color:var(--mut);padding:4px 4px 8px}
-#week{display:flex}
-.day{flex:1 1 0px;min-width:0;margin-right:8px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px;min-height:120px}
-.day:last-child{margin-right:0}
-.narrow #week{display:block}
-.narrow .day{margin:0 0 8px;min-height:0}
+#widgets,#shopview{position:absolute;top:0;left:0;right:0;bottom:0}
+#widgets{display:flex;flex-direction:column;padding:10px}
+#shopview{display:flex;flex-direction:column;background:var(--bg)}
+#widgets.hide,#shopview.hide{display:none}
+#shopbar{flex:none;padding:6px 10px;border-bottom:1px solid var(--bd);background:var(--card)}
+#shopframe{flex:1 1 0px;position:relative;min-height:0}
+.widget{flex:1 1 0px;min-height:0;margin-bottom:10px;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:10px 14px;overflow:hidden;display:flex;flex-direction:column;font-size:20px}
+.widget:last-child{margin-bottom:0}
+#wShop{align-items:center;justify-content:center;text-align:center;cursor:pointer;background:var(--ac);color:var(--acx);border-color:var(--ac);-webkit-user-select:none;user-select:none}
+#wShop .wsym{font-size:2.6em;line-height:1.1}
+#wShop .wtitle{font-size:1.4em;font-weight:700}
+#wShop .wsub{color:var(--acx);opacity:.85}
+.wh{flex:none;font-weight:700;font-size:.85em;color:var(--mut);margin-bottom:4px}
+.wbody{flex:1 1 auto;min-height:0;display:flex;flex-direction:row;align-items:center;justify-content:center}
+.wsym{font-size:3em;line-height:1.1}
+#wWeather .wsym{margin-right:.35em}
+.wtemp{font-size:1.9em;font-weight:700;line-height:1.1}
+.wdesc{font-size:1.1em;font-weight:600}
+.wsub{font-size:.85em;color:var(--mut)}
+#msg{flex:none;color:var(--mut);padding:0 4px 6px}
+#msg:empty{display:none}
+#week{flex:1 1 0px;min-height:0;display:flex;flex-direction:row}
+.wcol{flex:1 1 0px;min-width:0;display:flex;flex-direction:column}
+.wcol+.wcol{margin-left:8px}
+.day,.spacer{flex:1 1 0px;min-height:0;margin-bottom:8px}
+.wcol>:last-child{margin-bottom:0}
+.day{overflow:hidden;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:6px 8px}
+.spacer{visibility:hidden;border:1px solid transparent;padding:6px 8px}
 .day.today{background:var(--today);border-color:var(--ac)}
-.dh{font-weight:700;margin-bottom:6px}
+.dh{font-weight:700;font-size:17px;margin-bottom:6px}
 .dh small{color:var(--mut);font-weight:500}
-.ev{display:block;width:100%;text-align:left;min-height:48px;margin:0 0 6px;padding:6px 8px;border-radius:10px;border:0;border-left:5px solid var(--ac);background:var(--bg);font-size:15px;line-height:1.25}
+.ev{display:block;width:100%;text-align:left;min-height:0;margin:0 0 4px;padding:4px 7px;border-radius:8px;border:0;border-left:4px solid var(--ac);background:var(--bg);font-size:.88em;line-height:1.2}
+.ev.more{text-align:center;color:var(--ac);font-weight:600;margin-bottom:0}
 .ev.allday{background:var(--ac);color:var(--acx);border-left-color:var(--ac)}
 .ev b{display:block;font-weight:600;word-wrap:break-word}
-.ev span{color:var(--mut);font-size:13px}
+.ev span{color:var(--mut);font-size:.85em}
 .ev.allday span{color:var(--acx)}
-.none{color:var(--mut);font-size:14px}
+.none{color:var(--mut);font-size:.85em}
 #modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
 #modal.hide{display:none}
 .sheet{background:var(--card);border-radius:16px;padding:18px;width:100%;max-width:520px;max-height:85vh;overflow:auto;-webkit-overflow-scrolling:touch}
@@ -116,11 +139,21 @@ iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;background
 <header id="bar">
   <div class="grp"><button id="prev" aria-label="Previous week">‹</button><button id="today">Today</button><button id="next" aria-label="Next week">›</button></div>
   <div id="title"></div>
-  <div class="grp"><button class="m on" data-m="both">Both</button><button class="m" data-m="cal">Calendar</button><button class="m" data-m="shop">Shop</button><button id="reload" aria-label="Refresh">↻</button><button id="gear" aria-label="Settings">⚙︎</button></div>
+  <div class="grp"><button class="m on" data-m="both">Both</button><button class="m" data-m="cal">Calendar</button><button class="m" data-m="shop">Panel</button><button id="reload" aria-label="Refresh">↻</button><button id="gear" aria-label="Settings">⚙︎</button></div>
 </header>
 <div id="panes" class="both">
   <section id="cal"><div id="msg"></div><div id="week"></div></section>
-  <section id="shopp"><iframe id="shop" allow="camera" title="Weekly Shop"></iframe></section>
+  <section id="shopp">
+    <div id="widgets">
+      <div class="widget" id="wShop" role="button" tabindex="0"><div class="wsym">🛒</div><div class="wtitle">Weekly Shop</div><div class="wsub">Tap to open</div></div>
+      <div class="widget" id="wWeather"><div class="wh" id="wwHead">Today’s weather</div><div class="wbody" id="wwBody"><div class="wsub">Loading…</div></div></div>
+      <div class="widget" id="wDinner"><div class="wh">🍽️ Tonight’s dinner</div><div class="wbody" id="wdBody"></div></div>
+    </div>
+    <div id="shopview" class="hide">
+      <div id="shopbar"><button id="shopBack">‹ Back</button></div>
+      <div id="shopframe"><iframe id="shop" allow="camera" title="Weekly Shop"></iframe></div>
+    </div>
+  </section>
 </div>
 <div id="modal" class="hide"><div class="sheet" id="sheet"></div></div>
 <script>
@@ -373,6 +406,11 @@ function render() {
     $('title').textContent = weekStart.getDate() + ' ' + MN[weekStart.getMonth()] + ' – ' + last.getDate() + ' ' + MN[last.getMonth()] + ' ' + last.getFullYear();
     var box = $('week');
     box.textContent = '';
+    var colA = document.createElement('div'), colB = document.createElement('div');
+    colA.className = 'wcol';
+    colB.className = 'wcol';
+    box.appendChild(colA);
+    box.appendChild(colB);
     var occ = window.ICAL && events.length ? occurrences(weekStart, end) : [];
     var today = dayStart(new Date()).getTime();
     var _loop_1 = function (i) {
@@ -422,10 +460,45 @@ function render() {
             }
             finally { if (e_5) throw e_5.error; }
         }
-        box.appendChild(col);
+        var more = document.createElement('button');
+        more.className = 'ev more';
+        more.style.display = 'none';
+        more.onclick = function () { return showDay(d, list); };
+        col.appendChild(more);
+        (i < 4 ? colA : colB).appendChild(col);
     };
     for (var i = 0; i < 7; i++) {
         _loop_1(i);
+    }
+    var sp = document.createElement('div');
+    sp.className = 'spacer';
+    colB.appendChild(sp);
+    fitDays();
+}
+function fitDays() {
+    var cells = document.querySelectorAll('.day');
+    for (var i = 0; i < cells.length; i++) {
+        var c = cells[i];
+        if (!c.clientHeight)
+            continue;
+        var evs = c.querySelectorAll('.ev:not(.more)'), more = c.querySelector('.more');
+        for (var j = 0; j < evs.length; j++)
+            evs[j].style.display = '';
+        if (more)
+            more.style.display = 'none';
+        var z = 17;
+        c.style.fontSize = z + 'px';
+        while (z > 10 && c.scrollHeight > c.clientHeight + 1) {
+            z--;
+            c.style.fontSize = z + 'px';
+        }
+        var k = 0;
+        while (more && c.scrollHeight > c.clientHeight + 1 && k < evs.length - 1) {
+            k++;
+            evs[evs.length - k].style.display = 'none';
+            more.textContent = '+' + k + ' more';
+            more.style.display = 'block';
+        }
     }
 }
 function showEvent(e) {
@@ -438,6 +511,35 @@ function showEvent(e) {
         add('p', '📍 ' + e.loc);
     if (e.desc)
         add('p', e.desc.slice(0, 600));
+    var r = document.createElement('div');
+    r.className = 'row';
+    var c = document.createElement('button');
+    c.className = 'p';
+    c.textContent = 'Close';
+    c.onclick = closeModal;
+    r.appendChild(c);
+    s.appendChild(r);
+    $('modal').classList.remove('hide');
+}
+function showDay(d, list) {
+    var e_6, _a;
+    var s = $('sheet');
+    s.textContent = '';
+    var add = function (tag, txt) { var x = document.createElement(tag); x.textContent = txt; s.appendChild(x); return x; };
+    add('h2', dLong(d));
+    try {
+        for (var list_2 = __values(list), list_2_1 = list_2.next(); !list_2_1.done; list_2_1 = list_2.next()) {
+            var e = list_2_1.value;
+            add('p', (e.allDay ? 'All day' : fmtT(e.start) + (e.end > e.start ? ' – ' + fmtT(e.end) : '')) + '  ·  ' + e.title + (e.loc ? '  (' + e.loc + ')' : ''));
+        }
+    }
+    catch (e_6_1) { e_6 = { error: e_6_1 }; }
+    finally {
+        try {
+            if (list_2_1 && !list_2_1.done && (_a = list_2.return)) _a.call(list_2);
+        }
+        finally { if (e_6) throw e_6.error; }
+    }
     var r = document.createElement('div');
     r.className = 'row';
     var c = document.createElement('button');
@@ -472,6 +574,8 @@ $('gear').onclick = function () {
     var i2 = mk('input', '', { type: 'text', value: cfg.shop || 'index.html', autocapitalize: 'off', autocorrect: 'off' });
     mk('label', 'Calendar relay address (optional)');
     var i3 = mk('input', '', { type: 'text', value: cfg.proxy || '', placeholder: 'https://your-name.workers.dev/', autocapitalize: 'off', autocorrect: 'off' });
+    mk('label', 'Weather town or city (optional)');
+    var i4 = mk('input', '', { type: 'text', value: cfg.place || '', placeholder: 'Leave blank to use this iPad’s location', autocapitalize: 'words', autocorrect: 'off' });
     var r = mk('div');
     r.className = 'row';
     var sv = document.createElement('button');
@@ -481,7 +585,7 @@ $('gear').onclick = function () {
     cl.textContent = 'Cancel';
     cl.onclick = closeModal;
     sv.onclick = function () {
-        cfg = { ics: i1.value.trim(), shop: i2.value.trim() || 'index.html', proxy: i3.value.trim() };
+        cfg = { ics: i1.value.trim(), shop: i2.value.trim() || 'index.html', proxy: i3.value.trim(), place: i4.value.trim() };
         try {
             localStorage.setItem(K, JSON.stringify(cfg));
         }
@@ -489,10 +593,158 @@ $('gear').onclick = function () {
         $('shop').src = cfg.shop;
         closeModal();
         loadCal();
+        loadWeather();
     };
     r.append(sv, cl);
     $('modal').classList.remove('hide');
 };
+/* ---------- right-hand widgets ---------- */
+var idleT = null, canDetect = true;
+function bump() { clearTimeout(idleT); if (canDetect)
+    idleT = setTimeout(showWidgets, 30000); }
+function attachIdle() {
+    try {
+        var d_1 = $('shop').contentDocument;
+        if (!d_1)
+            throw new Error('x');
+        ['touchstart', 'touchmove', 'mousedown', 'keydown', 'input', 'scroll', 'click'].forEach(function (ev) { return d_1.addEventListener(ev, bump, true); });
+        canDetect = true;
+    }
+    catch (e) {
+        canDetect = false;
+    }
+}
+function showShop() { $('widgets').classList.add('hide'); $('shopview').classList.remove('hide'); attachIdle(); bump(); }
+function showWidgets() { clearTimeout(idleT); $('shopview').classList.add('hide'); $('widgets').classList.remove('hide'); fit(); }
+$('wShop').onclick = showShop;
+$('shopBack').onclick = showWidgets;
+function fitWidgets() {
+    var ws = document.querySelectorAll('.widget');
+    for (var i = 0; i < ws.length; i++) {
+        var w = ws[i];
+        if (!w.clientHeight)
+            continue;
+        var z = 20;
+        w.style.fontSize = z + 'px';
+        while (z > 9 && w.scrollHeight > w.clientHeight + 1) {
+            z--;
+            w.style.fontSize = z + 'px';
+        }
+    }
+}
+/* ---------- weather ---------- */
+var WX = { 0: ['☀️', 'Clear sky'], 1: ['🌤️', 'Mainly clear'], 2: ['⛅', 'Partly cloudy'], 3: ['☁️', 'Overcast'], 45: ['🌫️', 'Fog'], 48: ['🌫️', 'Freezing fog'],
+    51: ['🌦️', 'Light drizzle'], 53: ['🌦️', 'Drizzle'], 55: ['🌦️', 'Heavy drizzle'], 56: ['🌧️', 'Freezing drizzle'], 57: ['🌧️', 'Freezing drizzle'],
+    61: ['🌧️', 'Light rain'], 63: ['🌧️', 'Rain'], 65: ['🌧️', 'Heavy rain'], 66: ['🌧️', 'Freezing rain'], 67: ['🌧️', 'Freezing rain'],
+    71: ['🌨️', 'Light snow'], 73: ['❄️', 'Snow'], 75: ['❄️', 'Heavy snow'], 77: ['❄️', 'Snow grains'],
+    80: ['🌦️', 'Light showers'], 81: ['🌧️', 'Showers'], 82: ['🌧️', 'Heavy showers'], 85: ['🌨️', 'Snow showers'], 86: ['🌨️', 'Heavy snow showers'],
+    95: ['⛈️', 'Thunderstorm'], 96: ['⛈️', 'Thunderstorm and hail'], 97: ['⛈️', 'Thunderstorm'], 99: ['⛈️', 'Thunderstorm and hail'] };
+var geo = null, wxShown = false;
+try {
+    geo = JSON.parse(localStorage.getItem('family-hub-geo') || 'null');
+}
+catch (e) { }
+var wxBox = function () { var b = $('wwBody'); b.textContent = ''; return b; };
+var wxEl = function (parent, cls, txt) { var x = document.createElement('div'); x.className = cls; x.textContent = txt; parent.appendChild(x); return x; };
+function wxMsg(t) { if (wxShown)
+    return; wxEl(wxBox(), 'wsub', t); fitWidgets(); }
+function wxDraw(place, code, hi, lo, rain, now) {
+    var w = WX[code] || ['🌡️', 'Forecast'];
+    $('wwHead').textContent = 'Today’s weather' + (place ? ' · ' + place : '');
+    var b = wxBox();
+    var sym = wxEl(b, 'wsym', w[0]);
+    var t = wxEl(b, 'wtxt', '');
+    wxEl(t, 'wtemp', Math.round(hi) + '° / ' + Math.round(lo) + '°');
+    wxEl(t, 'wdesc', w[1]);
+    var bits = [];
+    if (rain !== null && rain !== undefined)
+        bits.push('Rain ' + Math.round(rain) + '%');
+    if (now !== null && now !== undefined)
+        bits.push('Now ' + Math.round(now) + '°');
+    if (bits.length)
+        wxEl(t, 'wsub', bits.join(' · '));
+    wxShown = true;
+    fitWidgets();
+}
+function locate() {
+    return new Promise(function (ok, no) {
+        if (!navigator.geolocation)
+            return no(new Error('nogeo'));
+        navigator.geolocation.getCurrentPosition(function (p) { return ok({ lat: p.coords.latitude, lon: p.coords.longitude, name: '' }); }, function () { return no(new Error('nogeo')); }, { timeout: 12000, maximumAge: 3600000 });
+    });
+}
+function geocode(place) {
+    return __awaiter(this, void 0, void 0, function () {
+        var r, j, x;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=en&format=json&name=' + encodeURIComponent(place))];
+                case 1:
+                    r = _a.sent();
+                    if (!r.ok)
+                        throw new Error('lookup');
+                    return [4 /*yield*/, r.json()];
+                case 2:
+                    j = _a.sent();
+                    x = j && j.results && j.results[0];
+                    if (!x)
+                        throw new Error('notfound');
+                    return [2 /*return*/, { place: place, lat: x.latitude, lon: x.longitude, name: x.name }];
+            }
+        });
+    });
+}
+function loadWeather() {
+    return __awaiter(this, void 0, void 0, function () {
+        var g, e_7, r, j, d, e_8;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 7, , 8]);
+                    if (!cfg.place) return [3 /*break*/, 4];
+                    if (!(geo && geo.place === cfg.place)) return [3 /*break*/, 1];
+                    g = geo;
+                    return [3 /*break*/, 3];
+                case 1: return [4 /*yield*/, geocode(cfg.place)];
+                case 2:
+                    g = _a.sent();
+                    geo = g;
+                    try {
+                        localStorage.setItem('family-hub-geo', JSON.stringify(g));
+                    }
+                    catch (e) { }
+                    _a.label = 3;
+                case 3: return [3 /*break*/, 6];
+                case 4: return [4 /*yield*/, locate()];
+                case 5:
+                    g = _a.sent();
+                    _a.label = 6;
+                case 6: return [3 /*break*/, 8];
+                case 7:
+                    e_7 = _a.sent();
+                    wxMsg(cfg.place ? (e_7 && e_7.message === 'notfound' ? 'Couldn’t find “' + cfg.place + '”. Check the town in ⚙︎.' : 'Couldn’t look up your town. Will try again soon.') : 'Tap ⚙︎ and add your town to see today’s weather.');
+                    return [2 /*return*/];
+                case 8:
+                    _a.trys.push([8, 11, , 12]);
+                    return [4 /*yield*/, fetch('https://api.open-meteo.com/v1/forecast?latitude=' + g.lat + '&longitude=' + g.lon + '&current=temperature_2m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=1')];
+                case 9:
+                    r = _a.sent();
+                    if (!r.ok)
+                        throw new Error('HTTP ' + r.status);
+                    return [4 /*yield*/, r.json()];
+                case 10:
+                    j = _a.sent(), d = j.daily;
+                    wxDraw(g.name, d.weather_code[0], d.temperature_2m_max[0], d.temperature_2m_min[0], d.precipitation_probability_max ? d.precipitation_probability_max[0] : null, j.current ? j.current.temperature_2m : null);
+                    return [3 /*break*/, 12];
+                case 11:
+                    e_8 = _a.sent();
+                    wxMsg('Couldn’t load the forecast. Will try again soon.');
+                    return [3 /*break*/, 12];
+                case 12: return [2 /*return*/];
+            }
+        });
+    });
+}
 /* ---------- controls ---------- */
 $('prev').onclick = function () { weekStart = addDays(weekStart, -7); render(); };
 $('next').onclick = function () { weekStart = addDays(weekStart, 7); render(); };
@@ -515,17 +767,20 @@ $('cal').addEventListener('touchend', function (e) {
         render();
     }
 }, { passive: true });
-var fit = function () { return $('cal').classList.toggle('narrow', $('cal').clientWidth < 760); };
+var fit = function () { fitDays(); fitWidgets(); };
 if (window.ResizeObserver)
     new ResizeObserver(fit).observe($('cal'));
 window.addEventListener('resize', fit);
 window.addEventListener('orientationchange', function () { setTimeout(fit, 300); });
 setInterval(fit, 2000);
 /* ---------- start-up ---------- */
+$('shop').addEventListener('load', attachIdle);
 $('shop').src = cfg.shop || 'index.html';
 fit();
 render();
 loadCal();
+loadWeather();
+setInterval(loadWeather, 30 * 60 * 1000);
 setInterval(loadCal, 10 * 60 * 1000);
 setInterval(function () { if (Date.now() - loadedAt > 0)
     render(); }, 60 * 1000);
@@ -537,7 +792,7 @@ document.addEventListener('visibilitychange', function () {
     }
 });
 function wake() {
-    return __awaiter(this, void 0, void 0, function () { var e_6; return __generator(this, function (_a) {
+    return __awaiter(this, void 0, void 0, function () { var e_9; return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 3, , 4]);
@@ -548,7 +803,7 @@ function wake() {
                 _a.label = 2;
             case 2: return [3 /*break*/, 4];
             case 3:
-                e_6 = _a.sent();
+                e_9 = _a.sent();
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
