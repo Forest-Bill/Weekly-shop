@@ -91,19 +91,21 @@ async function loadCal(){
   const tries=[];
   if(px)tries.push(['your relay',u=>px+(px.includes('?')?'&':'?')+'url='+encodeURIComponent(u)]);
   tries.push(['direct',u=>u],['relay 1',u=>'https://corsproxy.io/?url='+encodeURIComponent(u)],['relay 2',u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u)],['relay 3',u=>'https://api.codetabs.com/v1/proxy/?quest='+encodeURIComponent(u)]);
-  let text=null;const why=[];
+  try{await loadIcal()}catch(e){msg('Couldn’t load the calendar reader: '+(e&&e.message||'error'));return}
+  const why=[];let ok=false;
   for(const [name,t] of tries){
     try{
       const r=await fetch(t(url));
       if(!r.ok){why.push(name+': HTTP '+r.status);continue}
       const x=await r.text();
-      if(x.includes('BEGIN:VCALENDAR')){text=x;break}
-      why.push(name+': not a calendar');
-    }catch(e){why.push(name+': blocked')}
+      const a=x.indexOf('BEGIN:VCALENDAR'),b=x.lastIndexOf('END:VCALENDAR');
+      if(a<0){why.push(name+': not a calendar');continue}
+      if(b<0){why.push(name+': incomplete ('+Math.round(x.length/1024)+' KB)');continue}
+      parse(x.slice(a,b+13));ok=true;break;
+    }catch(e){why.push(name+': '+String((e&&e.message)||'blocked').slice(0,60))}
   }
-  if(!text){msg('Couldn’t load the calendar ('+why.join('; ')+'). Check the link in ⚙︎ and that the calendar is set to Public.');return}
-  try{await loadIcal();parse(text);loadedAt=Date.now();msg('')}
-  catch(e){msg('Couldn’t read the calendar: '+(e&&e.message||'error'))}
+  if(!ok){msg('Couldn’t load the calendar ('+why.join('; ')+'). Check the link in ⚙︎ and that the calendar is set to Public. If it keeps failing, set up your own relay in ⚙︎.');render();return}
+  loadedAt=Date.now();msg('');
   render();
 }
 function parse(text){
