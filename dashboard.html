@@ -275,7 +275,7 @@ function loadCal() {
                     px = (cfg.proxy || '').trim();
                     tries = [];
                     if (px)
-                        tries.push(['your relay', function (u) { return px + (px.includes('?') ? '&' : '?') + 'url=' + encodeURIComponent(u); }]);
+                        tries.push(['your relay [' + px.replace(/^https?:\/\//, '').slice(0, 40) + ']', function (u) { return px + (px.includes('?') ? '&' : '?') + 'url=' + encodeURIComponent(u); }]);
                     tries.push(['direct', function (u) { return u; }], ['relay 1', function (u) { return 'https://corsproxy.io/?url=' + encodeURIComponent(u); }], ['relay 2', function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); }], ['relay 3', function (u) { return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u); }]);
                     _c.label = 1;
                 case 1:
@@ -825,7 +825,7 @@ function fetchVia(url, check) {
                     px = (cfg.proxy || '').trim();
                     tries = [];
                     if (px)
-                        tries.push(['your relay', function (u) { return px + (px.includes('?') ? '&' : '?') + 'url=' + encodeURIComponent(u); }]);
+                        tries.push(['your relay [' + px.replace(/^https?:\/\//, '').slice(0, 40) + ']', function (u) { return px + (px.includes('?') ? '&' : '?') + 'url=' + encodeURIComponent(u); }]);
                     tries.push(['direct', function (u) { return u; }], ['relay 1', function (u) { return 'https://corsproxy.io/?url=' + encodeURIComponent(u); }], ['relay 2', function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); }], ['relay 3', function (u) { return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u); }]);
                     why = [];
                     _c.label = 1;
