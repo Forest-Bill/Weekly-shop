@@ -69,7 +69,9 @@ window.__bootDone=function(){var b=document.getElementById('boot');if(b&&b.paren
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--tx);font:17px/1.35 -apple-system,system-ui,"Segoe UI",sans-serif;display:flex;flex-direction:column;padding:0;padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
 #boot{padding:16px;color:var(--mut);font-size:16px}
-#bar{display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid var(--bd);background:var(--card)}
+#bar{position:fixed;top:0;left:0;right:0;z-index:8;display:flex;align-items:center;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top,0px));border-bottom:1px solid var(--bd);background:var(--card);-webkit-transform:translateY(-120%);transform:translateY(-120%);-webkit-transition:-webkit-transform .2s;transition:transform .2s}
+#bar.open{-webkit-transform:translateY(0);transform:translateY(0);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+#strip{flex:none;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--mut);cursor:pointer;-webkit-user-select:none;user-select:none}
 #bar>*+*{margin-left:10px}
 #title{flex:1 1 0px;text-align:center;font-size:21px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .grp{display:flex}
@@ -97,6 +99,9 @@ iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;background
 #wShop .wsub{color:var(--acx);opacity:.85}
 .wh{flex:none;font-weight:700;font-size:.85em;color:var(--mut);margin-bottom:4px}
 .wbody{flex:1 1 auto;min-height:0;display:flex;flex-direction:row;align-items:center;justify-content:center}
+.wbody.col{flex-direction:column;text-align:center}
+.wmatch{font-size:1.4em;font-weight:700;line-height:1.15;word-wrap:break-word}
+.wwhen{font-size:1.05em;font-weight:600;margin-top:.2em}
 .wsym{font-size:3em;line-height:1.1}
 #wWeather .wsym{margin-right:.35em}
 .wtemp{font-size:1.9em;font-weight:700;line-height:1.1}
@@ -107,10 +112,9 @@ iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;background
 #week{flex:1 1 0px;min-height:0;display:flex;flex-direction:row}
 .wcol{flex:1 1 0px;min-width:0;display:flex;flex-direction:column}
 .wcol+.wcol{margin-left:8px}
-.day,.spacer{flex:1 1 0px;min-height:0;margin-bottom:8px}
+.day{flex:1 1 0px;min-height:0;margin-bottom:8px}
 .wcol>:last-child{margin-bottom:0}
 .day{overflow:hidden;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:6px 8px}
-.spacer{visibility:hidden;border:1px solid transparent;padding:6px 8px}
 .day.today{background:var(--today);border-color:var(--ac)}
 .dh{font-weight:700;font-size:17px;margin-bottom:6px}
 .dh small{color:var(--mut);font-weight:500}
@@ -141,6 +145,7 @@ iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;background
   <div id="title"></div>
   <div class="grp"><button class="m on" data-m="both">Both</button><button class="m" data-m="cal">Calendar</button><button class="m" data-m="shop">Panel</button><button id="reload" aria-label="Refresh">↻</button><button id="gear" aria-label="Settings">⚙︎</button></div>
 </header>
+<div id="strip" role="button" tabindex="0"><span id="stripTxt"></span></div>
 <div id="panes" class="both">
   <section id="cal"><div id="msg"></div><div id="week"></div></section>
   <section id="shopp">
@@ -148,6 +153,7 @@ iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;background
       <div class="widget" id="wShop" role="button" tabindex="0"><div class="wsym">🛒</div><div class="wtitle">Weekly Shop</div><div class="wsub">Tap to open</div></div>
       <div class="widget" id="wWeather"><div class="wh" id="wwHead">Today’s weather</div><div class="wbody" id="wwBody"><div class="wsub">Loading…</div></div></div>
       <div class="widget" id="wDinner"><div class="wh">🍽️ Tonight’s dinner</div><div class="wbody" id="wdBody"></div></div>
+      <div class="widget" id="wArsenal"><div class="wh">⚽ Arsenal · next match</div><div class="wbody col" id="waBody"><div class="wsub">Loading…</div></div></div>
     </div>
     <div id="shopview" class="hide">
       <div id="shopbar"><button id="shopBack">‹ Back</button></div>
@@ -404,6 +410,7 @@ function occurrences(a, b) {
 function render() {
     var end = addDays(weekStart, 7), last = addDays(weekStart, 6);
     $('title').textContent = weekStart.getDate() + ' ' + MN[weekStart.getMonth()] + ' – ' + last.getDate() + ' ' + MN[last.getMonth()] + ' ' + last.getFullYear();
+    $('stripTxt').textContent = '▾  ' + $('title').textContent;
     var box = $('week');
     box.textContent = '';
     var colA = document.createElement('div'), colB = document.createElement('div');
@@ -470,12 +477,22 @@ function render() {
     for (var i = 0; i < 7; i++) {
         _loop_1(i);
     }
-    var sp = document.createElement('div');
-    sp.className = 'spacer';
-    colB.appendChild(sp);
     fitDays();
 }
+function sizeCols() {
+    var cols = document.querySelectorAll('.wcol');
+    if (cols.length < 2)
+        return;
+    var a = cols[0].querySelectorAll('.day'), b = cols[1].querySelectorAll('.day');
+    if (!a.length || !b.length)
+        return;
+    b[0].style.flex = '';
+    var h = a[0].offsetHeight;
+    if (h > 0)
+        b[0].style.flex = '0 0 ' + h + 'px';
+}
 function fitDays() {
+    sizeCols();
     var cells = document.querySelectorAll('.day');
     for (var i = 0; i < cells.length; i++) {
         var c = cells[i];
@@ -576,6 +593,8 @@ $('gear').onclick = function () {
     var i3 = mk('input', '', { type: 'text', value: cfg.proxy || '', placeholder: 'https://your-name.workers.dev/', autocapitalize: 'off', autocorrect: 'off' });
     mk('label', 'Weather town or city (optional)');
     var i4 = mk('input', '', { type: 'text', value: cfg.place || '', placeholder: 'Leave blank to use this iPad’s location', autocapitalize: 'words', autocorrect: 'off' });
+    mk('label', 'Arsenal fixtures calendar link (optional)');
+    var i5 = mk('input', '', { type: 'text', value: cfg.fixtures || '', placeholder: 'Leave blank for the default feed', autocapitalize: 'off', autocorrect: 'off' });
     var r = mk('div');
     r.className = 'row';
     var sv = document.createElement('button');
@@ -585,7 +604,7 @@ $('gear').onclick = function () {
     cl.textContent = 'Cancel';
     cl.onclick = closeModal;
     sv.onclick = function () {
-        cfg = { ics: i1.value.trim(), shop: i2.value.trim() || 'index.html', proxy: i3.value.trim(), place: i4.value.trim() };
+        cfg = { ics: i1.value.trim(), shop: i2.value.trim() || 'index.html', proxy: i3.value.trim(), place: i4.value.trim(), fixtures: i5.value.trim() };
         try {
             localStorage.setItem(K, JSON.stringify(cfg));
         }
@@ -594,10 +613,26 @@ $('gear').onclick = function () {
         closeModal();
         loadCal();
         loadWeather();
+        loadFixtures();
     };
     r.append(sv, cl);
     $('modal').classList.remove('hide');
 };
+/* ---------- hidden top bar ---------- */
+var barT = null;
+function barClose() { clearTimeout(barT); $('bar').classList.remove('open'); }
+function barBump() { clearTimeout(barT); barT = setTimeout(barClose, 10000); }
+function barOpen() { $('bar').classList.add('open'); barBump(); }
+$('strip').onclick = barOpen;
+var sy = null;
+$('strip').addEventListener('touchstart', function (e) { sy = e.touches[0].clientY; }, false);
+$('strip').addEventListener('touchend', function (e) { if (sy !== null && e.changedTouches[0].clientY - sy > 20)
+    barOpen(); sy = null; }, false);
+['touchstart', 'mousedown', 'click'].forEach(function (ev) { return $('bar').addEventListener(ev, function () { if ($('bar').classList.contains('open'))
+    barBump(); }, false); });
+document.addEventListener('touchstart', function (e) { if ($('bar').classList.contains('open') && !$('bar').contains(e.target))
+    barClose(); }, true);
+$('title').onclick = barClose;
 /* ---------- right-hand widgets ---------- */
 var idleT = null, canDetect = true;
 function bump() { clearTimeout(idleT); if (canDetect)
@@ -745,6 +780,161 @@ function loadWeather() {
         });
     });
 }
+/* ---------- Arsenal next match ---------- */
+var ARS_DEFAULT = 'https://ics.fixtur.es/v2/arsenal.ics';
+var fx = [];
+try {
+    fx = JSON.parse(localStorage.getItem('family-hub-fx') || '[]');
+}
+catch (e) { }
+var fxWhy = '';
+var icsDate = function (v) {
+    var m = /^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?)?(Z)?$/.exec(v);
+    if (!m)
+        return null;
+    var Y = +m[1], M = +m[2] - 1, D = +m[3];
+    if (m[4] === undefined)
+        return new Date(Y, M, D).getTime();
+    return m[7] ? Date.UTC(Y, M, D, +m[4], +m[5], +(m[6] || 0)) : new Date(Y, M, D, +m[4], +m[5], +(m[6] || 0)).getTime();
+};
+function parseFixtures(text) {
+    var out = [], blocks = text.replace(/\r?\n[ \t]/g, '').split('BEGIN:VEVENT');
+    var _loop_3 = function (i) {
+        var b = blocks[i].split('END:VEVENT')[0];
+        var f = function (name) { var m = new RegExp('^' + name + '[^:\\r\\n]*:(.*)$', 'mi').exec(b); return m ? m[1].replace(/\\,/g, ',').replace(/\\n/gi, ' ').replace(/\;/g, ';').trim() : ''; };
+        var t = icsDate(f('DTSTART'));
+        if (t === null)
+            return "continue";
+        out.push({ t: t, title: f('SUMMARY'), loc: f('LOCATION'), desc: f('DESCRIPTION') });
+    };
+    for (var i = 1; i < blocks.length; i++) {
+        _loop_3(i);
+    }
+    return out.sort(function (a, b) { return a.t - b.t; });
+}
+function fetchVia(url, check) {
+    return __awaiter(this, void 0, void 0, function () {
+        var px, tries, why, tries_2, tries_2_1, _a, name, t, r, x, e_9, e_10_1;
+        var e_10, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    px = (cfg.proxy || '').trim();
+                    tries = [];
+                    if (px)
+                        tries.push(['your relay', function (u) { return px + (px.includes('?') ? '&' : '?') + 'url=' + encodeURIComponent(u); }]);
+                    tries.push(['direct', function (u) { return u; }], ['relay 1', function (u) { return 'https://corsproxy.io/?url=' + encodeURIComponent(u); }], ['relay 2', function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); }], ['relay 3', function (u) { return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u); }]);
+                    why = [];
+                    _c.label = 1;
+                case 1:
+                    _c.trys.push([1, 9, 10, 11]);
+                    tries_2 = __values(tries), tries_2_1 = tries_2.next();
+                    _c.label = 2;
+                case 2:
+                    if (!!tries_2_1.done) return [3 /*break*/, 8];
+                    _a = __read(tries_2_1.value, 2), name = _a[0], t = _a[1];
+                    _c.label = 3;
+                case 3:
+                    _c.trys.push([3, 6, , 7]);
+                    return [4 /*yield*/, fetch(t(url))];
+                case 4:
+                    r = _c.sent();
+                    if (!r.ok) {
+                        why.push(name + ': HTTP ' + r.status);
+                        return [3 /*break*/, 7];
+                    }
+                    return [4 /*yield*/, r.text()];
+                case 5:
+                    x = _c.sent();
+                    if (check(x))
+                        return [2 /*return*/, { text: x, why: why }];
+                    why.push(name + ': not a calendar');
+                    return [3 /*break*/, 7];
+                case 6:
+                    e_9 = _c.sent();
+                    why.push(name + ': blocked');
+                    return [3 /*break*/, 7];
+                case 7:
+                    tries_2_1 = tries_2.next();
+                    return [3 /*break*/, 2];
+                case 8: return [3 /*break*/, 11];
+                case 9:
+                    e_10_1 = _c.sent();
+                    e_10 = { error: e_10_1 };
+                    return [3 /*break*/, 11];
+                case 10:
+                    try {
+                        if (tries_2_1 && !tries_2_1.done && (_b = tries_2.return)) _b.call(tries_2);
+                    }
+                    finally { if (e_10) throw e_10.error; }
+                    return [7 /*endfinally*/];
+                case 11: return [2 /*return*/, { text: null, why: why }];
+            }
+        });
+    });
+}
+function loadFixtures() {
+    return __awaiter(this, void 0, void 0, function () {
+        var url, r, all;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    url = (cfg.fixtures || ARS_DEFAULT).trim().replace(/^webcal/i, 'https');
+                    return [4 /*yield*/, fetchVia(url, function (x) { return x.indexOf('BEGIN:VCALENDAR') >= 0 && x.indexOf('END:VCALENDAR') >= 0; })];
+                case 1:
+                    r = _a.sent();
+                    if (!r.text) {
+                        fxWhy = r.why.join('; ');
+                        drawFixture();
+                        return [2 /*return*/];
+                    }
+                    all = parseFixtures(r.text).filter(function (e) { return !/women|\bwfc\b/i.test(e.title) && e.t + 3 * 3600000 > Date.now(); }).slice(0, 10);
+                    fxWhy = '';
+                    if (all.length) {
+                        fx = all;
+                        try {
+                            localStorage.setItem('family-hub-fx', JSON.stringify(fx));
+                        }
+                        catch (e) { }
+                    }
+                    else
+                        fxWhy = 'no upcoming matches in that calendar';
+                    drawFixture();
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function drawFixture() {
+    var b = $('waBody');
+    if (!b)
+        return;
+    b.textContent = '';
+    var now = Date.now();
+    var n = null;
+    for (var i = 0; i < fx.length; i++) {
+        if (fx[i].t + 2 * 3600000 > now) {
+            n = fx[i];
+            break;
+        }
+    }
+    if (!n) {
+        wxEl(b, 'wsub', fxWhy ? 'Couldn’t load fixtures (' + fxWhy.slice(0, 110) + '). Add a fixtures link in ⚙︎ or set up your relay.' : 'Loading…');
+        fitWidgets();
+        return;
+    }
+    var d = new Date(n.t);
+    var title = n.title.replace(/^[^A-Za-z0-9]+/, '').trim();
+    wxEl(b, 'wmatch', title);
+    var days = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() - new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime()) / 86400000);
+    wxEl(b, 'wwhen', DN[d.getDay()] + ' ' + d.getDate() + ' ' + MN[d.getMonth()] + ' · ' + fmtT(d));
+    var home = /^arsenal\b/i.test(title);
+    var bits = [days <= 0 ? 'Today' : days === 1 ? 'Tomorrow' : 'In ' + days + ' days', home ? 'Home' : 'Away'];
+    if (n.loc)
+        bits.push(n.loc.split(',')[0]);
+    wxEl(b, 'wsub', bits.join(' · '));
+    fitWidgets();
+}
 /* ---------- controls ---------- */
 $('prev').onclick = function () { weekStart = addDays(weekStart, -7); render(); };
 $('next').onclick = function () { weekStart = addDays(weekStart, 7); render(); };
@@ -781,9 +971,12 @@ render();
 loadCal();
 loadWeather();
 setInterval(loadWeather, 30 * 60 * 1000);
+drawFixture();
+loadFixtures();
+setInterval(loadFixtures, 6 * 60 * 60 * 1000);
 setInterval(loadCal, 10 * 60 * 1000);
 setInterval(function () { if (Date.now() - loadedAt > 0)
-    render(); }, 60 * 1000);
+    render(); drawFixture(); }, 60 * 1000);
 document.addEventListener('visibilitychange', function () {
     if (!document.hidden) {
         if (Date.now() - loadedAt > 5 * 60 * 1000)
@@ -792,7 +985,7 @@ document.addEventListener('visibilitychange', function () {
     }
 });
 function wake() {
-    return __awaiter(this, void 0, void 0, function () { var e_9; return __generator(this, function (_a) {
+    return __awaiter(this, void 0, void 0, function () { var e_11; return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 3, , 4]);
@@ -803,7 +996,7 @@ function wake() {
                 _a.label = 2;
             case 2: return [3 /*break*/, 4];
             case 3:
-                e_9 = _a.sent();
+                e_11 = _a.sent();
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
