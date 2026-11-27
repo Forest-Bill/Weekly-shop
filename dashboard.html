@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Family Hub">
+<meta name="theme-color" content="#2f7d4f">
+<title>Family Hub</title>
+<style>
+:root{--bg:#faf8f4;--card:#fff;--tx:#222;--mut:#777;--ac:#2f7d4f;--acx:#fff;--bd:#e6e1d8;--today:#e8f3ec;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#171a18;--card:#222623;--tx:#eee;--mut:#9aa39d;--ac:#5fbf86;--acx:#102016;--bd:#343a36;--today:#1f2e25;color-scheme:dark}}
+*{box-sizing:border-box;touch-action:manipulation}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:17px/1.35 -apple-system,system-ui,"Segoe UI",sans-serif;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+#bar{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--bd);background:var(--card)}
+#title{flex:1;text-align:center;font-size:21px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grp{display:flex;gap:8px}
+button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;min-width:56px;min-height:52px;padding:0 14px;-webkit-tap-highlight-color:transparent}
+button.on,button.p{background:var(--ac);color:var(--acx);border-color:var(--ac);font-weight:600}
+#panes{flex:1;min-height:0;display:grid;grid-template-columns:3fr 2fr}
+@media(orientation:portrait){#panes{grid-template-columns:1fr;grid-template-rows:1fr 1fr}}
+#panes.cal #shopp,#panes.shop #cal{display:none}
+#panes.cal,#panes.shop{grid-template-columns:1fr;grid-template-rows:1fr}
+#cal{overflow:auto;padding:10px;min-height:0;min-width:0}
+#shopp{min-height:0;min-width:0;border-left:1px solid var(--bd)}
+@media(orientation:portrait){#shopp{border-left:0;border-top:1px solid var(--bd)}}
+iframe{width:100%;height:100%;border:0;background:var(--bg)}
+#msg{color:var(--mut);padding:4px 4px 8px}
+#week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.narrow #week{grid-template-columns:1fr}
+.day{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px;min-height:120px}
+.narrow .day{min-height:0}
+.day.today{background:var(--today);border-color:var(--ac)}
+.dh{font-weight:700;margin-bottom:6px}
+.dh small{color:var(--mut);font-weight:500}
+.ev{display:block;width:100%;text-align:left;min-height:48px;margin:0 0 6px;padding:6px 8px;border-radius:10px;border:0;border-left:5px solid var(--ac);background:var(--bg);font-size:15px;line-height:1.25}
+.ev.allday{background:var(--ac);color:var(--acx);border-left-color:var(--ac)}
+.ev b{display:block;font-weight:600;overflow-wrap:anywhere}
+.ev span{color:var(--mut);font-size:13px}
+.ev.allday span{color:var(--acx)}
+.none{color:var(--mut);font-size:14px}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+#modal.hide{display:none}
+.sheet{background:var(--card);border-radius:16px;padding:18px;width:100%;max-width:520px;max-height:85vh;overflow:auto}
+.sheet h2{margin:0 0 6px;font-size:20px}
+.sheet p{margin:6px 0;overflow-wrap:anywhere}
+.sheet input{width:100%;padding:13px;margin:6px 0 12px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
+.sheet label{font-weight:600}
+.mut{color:var(--mut);font-size:14px}
+.row{display:flex;gap:10px;margin-top:6px}
+</style>
+</head>
+<body>
+<header id="bar">
+  <div class="grp"><button id="prev" aria-label="Previous week">‹</button><button id="today">Today</button><button id="next" aria-label="Next week">›</button></div>
+  <div id="title"></div>
+  <div class="grp"><button class="m on" data-m="both">Both</button><button class="m" data-m="cal">Calendar</button><button class="m" data-m="shop">Shop</button><button id="reload" aria-label="Refresh">↻</button><button id="gear" aria-label="Settings">⚙︎</button></div>
+</header>
+<div id="panes" class="both">
+  <section id="cal"><div id="msg"></div><div id="week"></div></section>
+  <section id="shopp"><iframe id="shop" allow="camera" title="Weekly Shop"></iframe></section>
+</div>
+<div id="modal" class="hide"><div class="sheet" id="sheet"></div></div>
+<script>
+const $=id=>document.getElementById(id);
+const K='family-hub-v1';
+let cfg={};try{cfg=JSON.parse(localStorage.getItem(K)||'{}')}catch(e){}
+let events=[],loadedAt=0;
+const dayStart=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const mondayOf=d=>addDays(dayStart(d),-((d.getDay()+6)%7));
+let weekStart=mondayOf(new Date());
+const fmtT=d=>d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+const msg=t=>{$('msg').textContent=t||''};
+
+/* ---------- loading the calendar ---------- */
+let icalP=null;
+const loadIcal=()=>icalP||(icalP=new Promise((ok,no)=>{
+  if(window.ICAL)return ok();
+  const s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/ical.js@1.5.0/build/ical.min.js';
+  s.onload=ok;s.onerror=()=>{icalP=null;no(new Error('Could not load the calendar reader.'))};
+  document.head.appendChild(s);
+}));
+async function loadCal(){
+  if(!cfg.ics){msg('Tap ⚙︎ and add your iCloud calendar link.');render();return}
+  msg('Loading calendar…');
+  const url=cfg.ics.trim().replace(/^webcal/i,'https');
+  const tries=[u=>u,u=>'https://corsproxy.io/?url='+encodeURIComponent(u),u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://api.codetabs.com/v1/proxy/?quest='+encodeURIComponent(u)];
+  let text=null;
+  for(const t of tries){
+    try{const r=await fetch(t(url));if(r.ok){const x=await r.text();if(x.includes('BEGIN:VCALENDAR')){text=x;break}}}catch(e){}
+  }
+  if(!text){msg('Couldn’t load the calendar. Check the link in ⚙︎ and that the calendar is set to Public.');return}
+  try{await loadIcal();parse(text);loadedAt=Date.now();msg('')}
+  catch(e){msg('Couldn’t read the calendar: '+(e&&e.message||'error'))}
+  render();
+}
+function parse(text){
+  const comp=new ICAL.Component(ICAL.parse(text));
+  comp.getAllSubcomponents('vtimezone').forEach(z=>{try{ICAL.TimezoneService.register(z)}catch(e){}});
+  const all=comp.getAllSubcomponents('vevent').map(v=>new ICAL.Event(v));
+  const masters={};
+  all.filter(e=>!e.isRecurrenceException()).forEach(e=>{masters[e.uid]=e});
+  all.filter(e=>e.isRecurrenceException()).forEach(e=>{const m=masters[e.uid];if(m)m.relateException(e);else masters[e.uid+'#'+Math.random()]=e});
+  events=Object.values(masters);
+}
+function occurrences(a,b){
+  const out=[],B=ICAL.Time.fromJSDate(b);
+  const push=(s,en,item)=>{
+    const sd=s.toJSDate(),ed=en?en.toJSDate():sd;
+    const hit=ed>sd?(sd<b&&ed>a):(sd>=a&&sd<b);
+    if(hit)out.push({title:item.summary||'(No title)',start:sd,end:ed,allDay:!!s.isDate,loc:item.location||'',desc:item.description||''});
+  };
+  for(const e of events){
+    try{
+      if(e.isRecurring()){
+        const it=e.iterator();let n,c=0;
+        while((n=it.next())&&c++<20000){
+          if(n.compare(B)>=0)break;
+          const o=e.getOccurrenceDetails(n);push(o.startDate,o.endDate,o.item);
+        }
+      }else push(e.startDate,e.endDate,e);
+    }catch(err){}
+  }
+  return out;
+}
+
+/* ---------- drawing the week ---------- */
+function render(){
+  const end=addDays(weekStart,7),last=addDays(weekStart,6);
+  const o={day:'numeric',month:'short'};
+  $('title').textContent=weekStart.toLocaleDateString('en-GB',o)+' – '+last.toLocaleDateString('en-GB',{...o,year:'numeric'});
+  const box=$('week');box.textContent='';
+  const occ=window.ICAL&&events.length?occurrences(weekStart,end):[];
+  const today=dayStart(new Date()).getTime();
+  for(let i=0;i<7;i++){
+    const d=addDays(weekStart,i),d2=addDays(d,1);
+    const col=document.createElement('div');col.className='day'+(d.getTime()===today?' today':'');
+    const h=document.createElement('div');h.className='dh';
+    h.textContent=d.toLocaleDateString('en-GB',{weekday:'short'})+' '+d.getDate()+' ';
+    const sm=document.createElement('small');sm.textContent=d.toLocaleDateString('en-GB',{month:'short'});h.appendChild(sm);
+    col.appendChild(h);
+    const list=occ.filter(e=>e.end>e.start?(e.start<d2&&e.end>d):(e.start>=d&&e.start<d2))
+      .sort((x,y)=>(y.allDay-x.allDay)||(x.start-y.start));
+    if(!list.length){const n=document.createElement('div');n.className='none';n.textContent='Nothing planned';col.appendChild(n)}
+    for(const e of list){
+      const b=document.createElement('button');b.className='ev'+(e.allDay?' allday':'');
+      const t=document.createElement('b');t.textContent=e.title;b.appendChild(t);
+      if(!e.allDay){const s=document.createElement('span');s.textContent=fmtT(e.start)+(e.end>e.start?' – '+fmtT(e.end):'');b.appendChild(s)}
+      b.onclick=()=>showEvent(e);
+      col.appendChild(b);
+    }
+    box.appendChild(col);
+  }
+}
+function showEvent(e){
+  const s=$('sheet');s.textContent='';
+  const add=(tag,txt)=>{const x=document.createElement(tag);x.textContent=txt;s.appendChild(x);return x};
+  add('h2',e.title);
+  const dopt={weekday:'long',day:'numeric',month:'long'};
+  add('p',e.allDay?e.start.toLocaleDateString('en-GB',dopt)+' (all day)':e.start.toLocaleDateString('en-GB',dopt)+', '+fmtT(e.start)+(e.end>e.start?' – '+fmtT(e.end):''));
+  if(e.loc)add('p','📍 '+e.loc);
+  if(e.desc)add('p',e.desc.slice(0,600));
+  const r=document.createElement('div');r.className='row';
+  const c=document.createElement('button');c.className='p';c.textContent='Close';c.onclick=closeModal;r.appendChild(c);s.appendChild(r);
+  $('modal').classList.remove('hide');
+}
+function closeModal(){$('modal').classList.add('hide')}
+$('modal').onclick=e=>{if(e.target===$('modal'))closeModal()};
+
+/* ---------- settings ---------- */
+$('gear').onclick=()=>{
+  const s=$('sheet');s.innerHTML='';
+  const mk=(tag,txt,attrs={})=>{const x=document.createElement(tag);if(txt)x.textContent=txt;Object.assign(x,attrs);s.appendChild(x);return x};
+  mk('h2','Settings');
+  mk('label','iCloud calendar link');
+  const i1=mk('input','',{type:'text',value:cfg.ics||'',placeholder:'webcal://p12-caldav.icloud.com/published/…',autocapitalize:'off',autocorrect:'off'});
+  mk('p','On an iPhone, iPad or Mac: open Calendar, tap the (i) next to the calendar, switch on Public Calendar and copy the link. Anyone with the link can see the calendar.').className='mut';
+  mk('label','Weekly Shop page');
+  const i2=mk('input','',{type:'text',value:cfg.shop||'index.html',autocapitalize:'off',autocorrect:'off'});
+  const r=mk('div');r.className='row';
+  const sv=document.createElement('button');sv.className='p';sv.textContent='Save';
+  const cl=document.createElement('button');cl.textContent='Cancel';cl.onclick=closeModal;
+  sv.onclick=()=>{
+    cfg={ics:i1.value.trim(),shop:i2.value.trim()||'index.html'};
+    try{localStorage.setItem(K,JSON.stringify(cfg))}catch(e){}
+    $('shop').src=cfg.shop;closeModal();loadCal();
+  };
+  r.append(sv,cl);
+  $('modal').classList.remove('hide');
+};
+
+/* ---------- controls ---------- */
+$('prev').onclick=()=>{weekStart=addDays(weekStart,-7);render()};
+$('next').onclick=()=>{weekStart=addDays(weekStart,7);render()};
+$('today').onclick=()=>{weekStart=mondayOf(new Date());render()};
+$('reload').onclick=loadCal;
+document.querySelectorAll('.m').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.m').forEach(x=>x.classList.toggle('on',x===b));
+  $('panes').className=b.dataset.m;
+  fit();
+});
+let tx=null,ty=0;
+$('cal').addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+$('cal').addEventListener('touchend',e=>{
+  if(tx===null)return;
+  const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;tx=null;
+  if(Math.abs(dx)>90&&Math.abs(dx)>Math.abs(dy)*2){weekStart=addDays(weekStart,dx<0?7:-7);render()}
+},{passive:true});
+const fit=()=>$('cal').classList.toggle('narrow',$('cal').clientWidth<760);
+new ResizeObserver(fit).observe($('cal'));
+
+/* ---------- start-up ---------- */
+$('shop').src=cfg.shop||'index.html';
+fit();render();loadCal();
+setInterval(loadCal,10*60*1000);
+setInterval(()=>{if(Date.now()-loadedAt>0)render()},60*1000);
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden){if(Date.now()-loadedAt>5*60*1000)loadCal();wake()}
+});
+async function wake(){try{if(navigator.wakeLock)await navigator.wakeLock.request('screen')}catch(e){}}
+wake();
+</script>
+</body>
+</html>
