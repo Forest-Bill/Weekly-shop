@@ -87,12 +87,21 @@ async function loadCal(){
   if(!cfg.ics){msg('Tap ⚙︎ and add your iCloud calendar link.');render();return}
   msg('Loading calendar…');
   const url=cfg.ics.trim().replace(/^webcal/i,'https');
-  const tries=[u=>u,u=>'https://corsproxy.io/?url='+encodeURIComponent(u),u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://api.codetabs.com/v1/proxy/?quest='+encodeURIComponent(u)];
-  let text=null;
-  for(const t of tries){
-    try{const r=await fetch(t(url));if(r.ok){const x=await r.text();if(x.includes('BEGIN:VCALENDAR')){text=x;break}}}catch(e){}
+  const px=(cfg.proxy||'').trim();
+  const tries=[];
+  if(px)tries.push(['your relay',u=>px+(px.includes('?')?'&':'?')+'url='+encodeURIComponent(u)]);
+  tries.push(['direct',u=>u],['relay 1',u=>'https://corsproxy.io/?url='+encodeURIComponent(u)],['relay 2',u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u)],['relay 3',u=>'https://api.codetabs.com/v1/proxy/?quest='+encodeURIComponent(u)]);
+  let text=null;const why=[];
+  for(const [name,t] of tries){
+    try{
+      const r=await fetch(t(url));
+      if(!r.ok){why.push(name+': HTTP '+r.status);continue}
+      const x=await r.text();
+      if(x.includes('BEGIN:VCALENDAR')){text=x;break}
+      why.push(name+': not a calendar');
+    }catch(e){why.push(name+': blocked')}
   }
-  if(!text){msg('Couldn’t load the calendar. Check the link in ⚙︎ and that the calendar is set to Public.');return}
+  if(!text){msg('Couldn’t load the calendar ('+why.join('; ')+'). Check the link in ⚙︎ and that the calendar is set to Public.');return}
   try{await loadIcal();parse(text);loadedAt=Date.now();msg('')}
   catch(e){msg('Couldn’t read the calendar: '+(e&&e.message||'error'))}
   render();
@@ -180,11 +189,13 @@ $('gear').onclick=()=>{
   mk('p','On an iPhone, iPad or Mac: open Calendar, tap the (i) next to the calendar, switch on Public Calendar and copy the link. Anyone with the link can see the calendar.').className='mut';
   mk('label','Weekly Shop page');
   const i2=mk('input','',{type:'text',value:cfg.shop||'index.html',autocapitalize:'off',autocorrect:'off'});
+  mk('label','Calendar relay address (optional)');
+  const i3=mk('input','',{type:'text',value:cfg.proxy||'',placeholder:'https://your-name.workers.dev/',autocapitalize:'off',autocorrect:'off'});
   const r=mk('div');r.className='row';
   const sv=document.createElement('button');sv.className='p';sv.textContent='Save';
   const cl=document.createElement('button');cl.textContent='Cancel';cl.onclick=closeModal;
   sv.onclick=()=>{
-    cfg={ics:i1.value.trim(),shop:i2.value.trim()||'index.html'};
+    cfg={ics:i1.value.trim(),shop:i2.value.trim()||'index.html',proxy:i3.value.trim()};
     try{localStorage.setItem(K,JSON.stringify(cfg))}catch(e){}
     $('shop').src=cfg.shop;closeModal();loadCal();
   };
