@@ -102,6 +102,7 @@ iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;background
 .wbody.col{flex-direction:column;text-align:center}
 .wmatch{font-size:1.4em;font-weight:700;line-height:1.15;word-wrap:break-word}
 .wwhen{font-size:1.05em;font-weight:600;margin-top:.2em}
+.wdish{font-size:1.5em;font-weight:700;line-height:1.2;text-align:center;word-wrap:break-word;white-space:pre-wrap}
 .wsym{font-size:3em;line-height:1.1}
 #wWeather .wsym{margin-right:.35em}
 .wtemp{font-size:1.9em;font-weight:700;line-height:1.1}
@@ -935,6 +936,66 @@ function drawFixture() {
     wxEl(b, 'wsub', bits.join(' · '));
     fitWidgets();
 }
+/* ---------- tonight's dinner (from the Weekly Shop 'Dinner plan' tab) ---------- */
+var DK = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+var dinRemote = null;
+function dinLocal() { try {
+    var x = JSON.parse(localStorage.getItem('weekly-shop-v1') || 'null');
+    return x && x.dinners ? x.dinners : null;
+}
+catch (e) {
+    return null;
+} }
+function loadDinnerRemote() {
+    return __awaiter(this, void 0, void 0, function () {
+        var c, r, e_11;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    c = null;
+                    try {
+                        c = JSON.parse(localStorage.getItem('weekly-shop-sync') || 'null');
+                    }
+                    catch (e) { }
+                    if (!c || !c.url || !c.code)
+                        return [2 /*return*/];
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, fetch(c.url.replace(/\/+$/, '') + '/shop/' + encodeURIComponent(c.code) + '/dinners.json')];
+                case 2:
+                    r = _a.sent();
+                    if (!r.ok)
+                        return [2 /*return*/];
+                    return [4 /*yield*/, r.json()];
+                case 3:
+                    dinRemote = _a.sent();
+                    drawDinner();
+                    return [3 /*break*/, 5];
+                case 4:
+                    e_11 = _a.sent();
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+function drawDinner() {
+    var b = $('wdBody');
+    if (!b)
+        return;
+    b.textContent = '';
+    var day = new Date().getDay(), key = DK[day];
+    var loc = dinLocal(), e = (loc && loc[key]) || (dinRemote && dinRemote[key]);
+    var txt = e && e.text ? String(e.text).replace(/^\s+|\s+$/g, '') : '';
+    if (!txt) {
+        wxEl(b, 'wsub', 'Nothing planned for ' + DL[day]);
+        fitWidgets();
+        return;
+    }
+    wxEl(b, 'wdish', txt);
+    fitWidgets();
+}
 /* ---------- controls ---------- */
 $('prev').onclick = function () { weekStart = addDays(weekStart, -7); render(); };
 $('next').onclick = function () { weekStart = addDays(weekStart, 7); render(); };
@@ -974,9 +1035,14 @@ setInterval(loadWeather, 30 * 60 * 1000);
 drawFixture();
 loadFixtures();
 setInterval(loadFixtures, 6 * 60 * 60 * 1000);
+drawDinner();
+loadDinnerRemote();
+setInterval(loadDinnerRemote, 2 * 60 * 1000);
+window.addEventListener('storage', function (e) { if (!e.key || e.key === 'weekly-shop-v1')
+    drawDinner(); });
 setInterval(loadCal, 10 * 60 * 1000);
 setInterval(function () { if (Date.now() - loadedAt > 0)
-    render(); drawFixture(); }, 60 * 1000);
+    render(); drawFixture(); drawDinner(); }, 60 * 1000);
 document.addEventListener('visibilitychange', function () {
     if (!document.hidden) {
         if (Date.now() - loadedAt > 5 * 60 * 1000)
@@ -985,7 +1051,7 @@ document.addEventListener('visibilitychange', function () {
     }
 });
 function wake() {
-    return __awaiter(this, void 0, void 0, function () { var e_11; return __generator(this, function (_a) {
+    return __awaiter(this, void 0, void 0, function () { var e_12; return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 3, , 4]);
@@ -996,7 +1062,7 @@ function wake() {
                 _a.label = 2;
             case 2: return [3 /*break*/, 4];
             case 3:
-                e_11 = _a.sent();
+                e_12 = _a.sent();
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
