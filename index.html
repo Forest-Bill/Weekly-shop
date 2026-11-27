@@ -2,6 +2,61 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>
+(function(){
+var box=null;
+function show(m){
+  try{
+    if(!box){
+      box=document.createElement('div');
+      box.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#b00020;color:#fff;font:14px/1.4 -apple-system,Helvetica,sans-serif;padding:12px 14px;white-space:pre-wrap;word-wrap:break-word';
+      box.onclick=function(){box.style.display='none'};
+      (document.body||document.documentElement).appendChild(box);
+    }
+    box.style.display='block';
+    box.textContent='Something went wrong (tap to hide):\n'+m;
+  }catch(e){}
+}
+window.onerror=function(msg,url,line){
+  if(!line&&/^Script error/i.test(String(msg)))return;
+  show(msg+(line?' (line '+line+')':''));
+};
+window.addEventListener('unhandledrejection',function(e){
+  var r=e&&e.reason;show(String((r&&r.message)||r));
+});
+function def(o,n,f){try{Object.defineProperty(o,n,{value:f,writable:true,configurable:true,enumerable:false})}catch(e){o[n]=f}}
+if(!Object.keys)Object.keys=function(o){var k=[],p;for(p in o)if(Object.prototype.hasOwnProperty.call(o,p))k.push(p);return k};
+if(!Object.entries)def(Object,'entries',function(o){return Object.keys(o).map(function(k){return[k,o[k]]})});
+if(!Object.values)def(Object,'values',function(o){return Object.keys(o).map(function(k){return o[k]})});
+if(!Object.assign)Object.assign=function(t){for(var i=1;i<arguments.length;i++){var s=arguments[i];if(s)for(var k in s)if(Object.prototype.hasOwnProperty.call(s,k))t[k]=s[k]}return t};
+if(!Array.prototype.includes)def(Array.prototype,'includes',function(v){return this.indexOf(v)>-1});
+if(!String.prototype.includes)def(String.prototype,'includes',function(s,i){return this.indexOf(s,i||0)>-1});
+if(!String.prototype.startsWith)def(String.prototype,'startsWith',function(s,i){i=i||0;return this.substr(i,s.length)===s});
+if(window.NodeList&&!NodeList.prototype.forEach)def(NodeList.prototype,'forEach',Array.prototype.forEach);
+if(window.Element&&!Element.prototype.append)def(Element.prototype,'append',function(){
+  for(var i=0;i<arguments.length;i++){var a=arguments[i];this.appendChild(typeof a==='string'?document.createTextNode(a):a)}
+});
+if(!window.fetch)window.fetch=function(url,o){
+  o=o||{};
+  return new Promise(function(resolve,reject){
+    var x=new XMLHttpRequest();
+    x.open(o.method||'GET',url,true);
+    var h=o.headers||{},k;
+    for(k in h)if(Object.prototype.hasOwnProperty.call(h,k))x.setRequestHeader(k,h[k]);
+    x.onload=function(){
+      var t=x.responseText;
+      resolve({ok:x.status>=200&&x.status<300,status:x.status,
+        text:function(){return Promise.resolve(t)},
+        json:function(){return new Promise(function(a,b){try{a(JSON.parse(t))}catch(e){b(e)}})}});
+    };
+    x.onerror=function(){reject(new TypeError('Load failed'))};
+    x.ontimeout=x.onerror;
+    x.send(o.body==null?null:o.body);
+  });
+};
+window.__bootDone=function(){var b=document.getElementById('boot');if(b&&b.parentNode)b.parentNode.removeChild(b)};
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Weekly Shop</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,13 +76,13 @@ nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);b
 nav button{flex:1;border:0;background:none;color:var(--mut);padding:20px 4px;min-height:68px;font-size:18px;-webkit-tap-highlight-color:transparent}
 nav button.on{color:var(--ac);font-weight:600}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
-.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)}
 .row:last-child{border-bottom:0}
-.row .t{flex:1;min-width:0;overflow-wrap:anywhere}
+.row .t{flex:1;min-width:0;word-wrap:break-word}
 .done .t{text-decoration:line-through;color:var(--mut)}
 input[type=text],textarea{width:100%;padding:11px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
 textarea{min-height:90px;resize:vertical}
-.add{display:flex;gap:8px;margin-bottom:12px}
+.add{display:flex;margin-bottom:12px}
 button.p,button.s{border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:600}
 button.p{background:var(--ac);color:var(--acx)}
 button.s{background:none;color:var(--ac);border:1px solid var(--bd)}
@@ -35,22 +90,30 @@ button.x{border:0;background:none;color:var(--dn);font-size:20px;padding:0 6px}
 input[type=checkbox]{width:22px;height:22px;accent-color:var(--ac)}
 .cat{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ac);padding:14px 0 2px;border-bottom:1px solid var(--bd)}
 .cat:first-child{padding-top:2px}
-#scan{position:fixed;inset:0;z-index:50;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
+#scan{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}
 #scan.hide{display:none}
 #scan video{width:100%;max-width:520px;border-radius:12px;background:#111}
-#scanAsk{display:flex;gap:8px;width:100%;max-width:520px}
+#scanAsk{display:flex;width:100%;max-width:520px}
 #scanAsk.hide{display:none}
-.lists{display:flex;gap:8px;margin:4px 0 14px}
+.lists{display:flex;margin:4px 0 14px}
 .lists button{flex:1;padding:14px 6px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--mut);font:inherit;font-size:17px;font-weight:600;-webkit-tap-highlight-color:transparent}
 .lists button.on{background:var(--ac);color:var(--acx);border-color:var(--ac)}
 .tag{font-size:12px;color:var(--mut)}
 .mut{color:var(--mut);font-size:14px}
-.acts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.acts{display:flex;flex-wrap:wrap;margin-bottom:4px}
 .hide{display:none}
 small.ing{display:block;color:var(--mut);font-size:13px}
+.row>*+*{margin-left:10px}
+.add>*+*{margin-left:8px}
+#scan>*+*{margin-top:14px}
+#scanAsk>*+*{margin-left:8px}
+.lists button+button{margin-left:8px}
+.acts>*{margin:0 8px 8px 0}
+#boot{padding:16px;color:var(--mut)}
 </style>
 </head>
 <body>
+<div id="boot">Loading… if this message stays, this iPad’s Safari may be too old for this page.</div>
 <main>
 <h1 id="h" class="hide"></h1>
 <div id="msg" class="mut" style="margin-bottom:8px"></div>
@@ -101,283 +164,950 @@ small.ing{display:block;color:var(--mut);font-size:13px}
   <button data-v="sta">🔁 Staples</button>
 </nav>
 <script>
-const $=id=>document.getElementById(id);
-const S={items:[],recipes:[],staples:[]};
-let cur='weekly';try{if(localStorage.getItem('weekly-shop-cur')==='xmas')cur='xmas'}catch(e){}
-const L=()=>S.items.filter(i=>(i.list||'weekly')===cur);
-function say(t){$('msg').textContent=t||''}
-function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
-const KEY='weekly-shop-v1',CFGKEY='weekly-shop-sync',COLS=['items','recipes','staples'];
-let D={items:{},recipes:{},staples:{}},cfg={},pending=0;
-try{cfg=JSON.parse(localStorage.getItem(CFGKEY)||'{}')}catch(e){}
-try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x)D={items:x.items||{},recipes:x.recipes||{},staples:x.staples||{}}}catch(e){}
-const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}};
-const rid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const base=()=>cfg.url&&cfg.code?cfg.url.replace(/\/+$/,'')+'/shop/'+encodeURIComponent(cfg.code):null;
-const syncStatus=t=>{const e=$('syncStatus');if(e)e.textContent=t};
-function rebuild(){
-  for(const k of COLS)S[k]=Object.entries(D[k]).map(([id,v])=>({id,...v}));
-  S.recipes.forEach(r=>{if(!Array.isArray(r.ingredients))r.ingredients=Object.values(r.ingredients||{})});
-  render();
-}
-async function remote(path,method,body){
-  const b=base();if(!b)return;pending++;
-  try{
-    const r=await fetch(b+path+'.json',{method,headers:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    syncStatus('Synced '+new Date().toLocaleTimeString());
-  }catch(e){syncStatus('Sync problem: '+e.message)}
-  finally{pending--}
-}
-async function pull(){
-  const b=base();if(!b||pending)return;
-  try{
-    const r=await fetch(b+'.json');if(!r.ok)throw new Error('HTTP '+r.status);
-    const x=await r.json();
-    if(x===null){if(COLS.some(k=>Object.keys(D[k]).length))await remote('','PUT',D)}
-    else{D={items:x.items||{},recipes:x.recipes||{},staples:x.staples||{}};persist();rebuild()}
-    syncStatus('Synced '+new Date().toLocaleTimeString());
-  }catch(e){syncStatus('Sync problem: '+e.message)}
-}
-const C=name=>({
-  add(o){const id=rid();D[name][id]=o;persist();rebuild();remote('/'+name+'/'+id,'PUT',o);return Promise.resolve({id})},
-  doc:id=>({
-    update(p){if(D[name][id]){Object.assign(D[name][id],p);persist();rebuild();remote('/'+name+'/'+id,'PATCH',p)}return Promise.resolve()},
-    delete(){delete D[name][id];persist();rebuild();remote('/'+name+'/'+id,'DELETE');return Promise.resolve()}
-  })
-});
-async function w(fn){try{await fn()}catch(e){say('Could not save: '+(e&&e.message||'error'))}}
-const PANTRY=g=>{const s=g.toLowerCase();
-  if(/\bsalt\b/.test(s))return true;
-  if(/\b(black|white|ground) pepper\b|^[\d\s.]*(pinch of |tsp |tsps )?pepper$/.test(s))return true;
-  if(/\b(olive|vegetable|sunflower|rapeseed) oil\b|^[^a-z]*((tbsp|tsp|tablespoons?|teaspoons?|ml|dash|drizzle|splash|glug)s?\s+(of\s+)?)?oil\b/.test(s))return true;
-  if(/\bflour\b/.test(s)&&!/(self[- ]?raising|bread|strong|wholemeal|rice|gluten|spelt|00)\s+flour/.test(s))return true;
-  if(/^[\d\s.\/]*(g|kg|tbsp|tsp|tbsps|tsps|tablespoons?|teaspoons?)?\s*(of\s+)?(caster |granulated |white )?sugar\b/.test(s)&&!/icing|brown|muscovado|demerara|sugar snap/.test(s))return true;
-  if(/stock cubes?|stock pots?|bouillon/.test(s))return true;
-  if(/vinegar|soy sauce|ketchup|mustard|mayo/.test(s))return true;
-  if(/\bbutter\b/.test(s)&&!/butter beans?|(peanut|almond|cashew|nut) butter/.test(s))return true;
-  if(/\bgarlic\b/.test(s)&&!/garlic (bread|sauce|naan|baguette)/.test(s))return true;
-  if(/baking powder|\bhoney\b/.test(s))return true;
-  if(/\bmilk\b/.test(s)&&!/coconut|condensed|evaporated|chocolate/.test(s)){
-    let ml=null;const m=s.match(/(\d+(?:\.\d+)?)\s*(ml|litres?|liters?|l|pints?|cups?)\b/);
-    if(m){const v=parseFloat(m[1]),u=m[2];ml=u==='ml'?v:/^(litre|liter|l)/.test(u)?v*1000:/^pint/.test(u)?v*568:v*240}
-    else if(/pint/.test(s))ml=568;
-    return ml===null||ml<=250}
-  return false};
-const par=async(a,f)=>{for(let k=0;k<a.length;k+=10)await Promise.all(a.slice(k,k+10).map(f))};
-const parseIng=t=>t.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean);
-
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
-  ['list','rec','sta'].forEach(v=>$('v-'+v).classList.toggle('hide',v!==b.dataset.v));
-  const T={rec:'🍲 Recipes',sta:'🔁 Staples'};$('h').textContent=T[b.dataset.v]||'';$('h').classList.toggle('hide',b.dataset.v==='list');
-});
-
-const CATS=['Fruit & Veg','Meat & Fish','Dairy & Eggs','Bakery','Pasta, Rice & Cereal','Tins, Jars & Sauces','Baking, Spices & Oils','Frozen','Snacks & Treats','Drinks','Household','Other'];
-const RULES=[
-['Household',/\b(toilet|kitchen roll|bin bags?|washing|detergent|dishwasher|bleach|sponge|foil|cling ?film|nappies|shampoo|toothpaste|soap|deodorant|tissues|laundry|cleaning)/],
-['Frozen',/\b(frozen|ice cream|fish fingers|oven chips)/],
-['Fruit & Veg',/(lemon|lime) juice/],
-['Tins, Jars & Sauces',/(purée|puree|paste\b|tinned|\bcans?\b|\btins?\b|stock|bouillon|gravy|peanut butter|coconut (milk|cream)|passata|ketchup|mayo|mustard|vinegar|soy|sauce|jelly|\bjam\b|honey|syrup|baked beans|chickpeas|kidney beans|olives|pickle|soup)/],
-['Pasta, Rice & Cereal',/\b(pasta|lasagne|spaghetti|penne|fusilli|tagliatelle|macaroni|tortellini|ravioli|noodles?|rice|couscous|lentils?|oats|porridge|cereal|quinoa|bulgur|muesli|cornflakes)/],
-['Baking, Spices & Oils',/(\bflour|\bsugar|baking|yeast|cornflour|cocoa|vanilla|\bsalt\b|(black|white|ground) pepper|peppercorn|cumin|paprika|cinnamon|turmeric|oregano|\bspices?|\bdried|\boil\b|nutmeg|bicarb|icing|sprinkles|cooking chocolate)/],
-['Bakery',/\b(bread|rolls?\b|bagels?|wraps?\b|tortillas?|pitta|naan|baguette|croissants?|buns?\b|crumpets?|pastry|pizza base)/],
-['Dairy & Eggs',/(milk|\bcream|\bbutter\b|cheese|cheddar|parmesan|mozzarella|yog(h)?urt|\beggs?\b|crème|feta|halloumi|mascarpone|ricotta)/],
-['Meat & Fish',/\b(beef|mince|chicken|pork|lamb|bacon|sausages?|ham\b|turkey|steak|salmon|cod\b|fish|prawns?|tuna|haddock|chorizo|gammon|duck|mackerel|pancetta|meatballs?|burgers?|sardines)/],
-['Snacks & Treats',/(\b(crisps|biscuits?|chocolate|sweets|snacks?|popcorn|cake|cookies?|dessert)|walnuts?|peanuts?|cashews?|hazelnuts?|almonds?|pistachios?|\bnuts\b)/],
-['Drinks',/\b(juice|cordial|water\b|cola|wine|beer|tea\b|coffee|lager|cider|prosecco|drinks?|lemonade|smoothie)/],
-['Fruit & Veg',/\b(onion|garlic|celery|carrot|potato|tomato|pepper|mushroom|lettuce|salad|spinach|cucumber|broccoli|cauliflower|courgette|aubergine|leek|cabbage|apple|banana|orange|lemon|lime|berr|strawberr|raspberr|blueberr|grape|avocado|pear|ginger|chilli|sweetcorn|corn|peas|beans|parsnip|squash|pumpkin|herb|basil|parsley|thyme|coriander|rosemary|mint|sage|chives|dill|fruit|veg|kale|asparagus|radish|beetroot|swede|turnip|melon|mango|pineapple|peach|plum|cherr|rocket|watercress|fennel|shallot|celeriac)/]
-];
-const catOf=n=>{const s=n.toLowerCase();for(const [c,re] of RULES)if(re.test(s))return c;return 'Other'};
-function renderItems(){
-  const box=$('items');box.textContent='';
-  if(!L().length){box.appendChild(el('div','mut','Nothing on the list yet.'));return}
-  const groups={};for(const it of L()){const c=catOf(it.name);(groups[c]=groups[c]||[]).push(it)}
-  for(const cat of CATS){const g=groups[cat];if(!g)continue;
-  box.appendChild(el('div','cat',cat+' ('+g.length+')'));
-  g.sort((a,b)=>(a.done-b.done)||a.name.localeCompare(b.name));
-  for(const it of g){
-    const r=el('div','row'+(it.done?' done':''));
-    const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!it.done;
-    cb.onchange=()=>w(()=>C('items').doc(it.id).update({done:cb.checked}));
-    const t=el('div','t');t.appendChild(document.createTextNode(it.name));
-    if(it.src&&it.src!=='manual')t.appendChild(el('small','tag',it.src));
-    const x=el('button','x','×');x.setAttribute('aria-label','Remove');
-    x.onclick=()=>w(()=>C('items').doc(it.id).delete());
-    r.append(cb,t,x);box.appendChild(r);
-  }}
-}
-function renderRecipes(){
-  const box=$('recipes');box.textContent='';
-  if(!S.recipes.length){box.appendChild(el('div','mut','No recipes yet.'));return}
-  for(const rc of [...S.recipes].sort((a,b)=>a.name.localeCompare(b.name))){
-    const r=el('div','row');
-    const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!rc.inWeek;
-    cb.onchange=()=>w(()=>C('recipes').doc(rc.id).update({inWeek:cb.checked}));
-    const t=el('div','t');t.appendChild(document.createTextNode(rc.name));
-    t.appendChild(el('small','ing',(rc.ingredients||[]).join(', ')));
-    const x=el('button','x','×');x.onclick=()=>{if(confirm('Delete "'+rc.name+'"?'))w(()=>C('recipes').doc(rc.id).delete())};
-    r.append(cb,t,x);box.appendChild(r);
-  }
-}
-function renderStaples(){
-  const box=$('staples');box.textContent='';
-  if(!S.staples.length){box.appendChild(el('div','mut','No staples yet.'));return}
-  for(const s of [...S.staples].sort((a,b)=>a.name.localeCompare(b.name))){
-    const r=el('div','row');const t=el('div','t',s.name);
-    const x=el('button','x','×');x.onclick=()=>w(()=>C('staples').doc(s.id).delete());
-    r.append(t,x);box.appendChild(r);
-  }
-}
-const render=()=>{renderItems();renderRecipes();renderStaples();
-  const all=L().length>0&&L().every(i=>i.done);$('tickAll').textContent=all?'Untick all':'Tick all'};
-$('tickAll').onclick=()=>w(async()=>{
-  const target=!L().every(i=>i.done);
-  await par(L().filter(i=>!!i.done!==target),i=>C('items').doc(i.id).update({done:target}));
-});
-
-async function addItems(list){
-  const have=new Set(L().map(i=>i.name.toLowerCase()));let n=0;const fresh=[];
-  for(const [name,src] of list){
-    const k=name.toLowerCase();if(have.has(k))continue;have.add(k);n++;fresh.push({name,src});
-    }
-  await par(fresh,o=>C('items').add({name:o.name,done:false,src:o.src,list:cur,ts:Date.now()}));
-  return n;
-}
-
-$('addItem').onclick=()=>{const v=$('newItem').value.trim();if(!v)return;$('newItem').value='';w(()=>addItems([[v,'manual']]))};
-$('newItem').onkeydown=e=>{if(e.key==='Enter')$('addItem').click()};
-$('addSta').onclick=()=>{const v=$('newSta').value.trim();if(!v)return;$('newSta').value='';w(()=>C('staples').add({name:v}))};
-$('newSta').onkeydown=e=>{if(e.key==='Enter')$('addSta').click()};
-$('addRec').onclick=()=>{
-  const name=$('rName').value.trim(),ing=parseIng($('rIng').value);
-  if(!name){say('Give the recipe a name.');return}
-  $('rName').value='';$('rIng').value='';say('');
-  w(()=>C('recipes').add({name,ingredients:ing,inWeek:false}));
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
 };
-let zxP=null,rdr=null,pendingCode=null;
-const loadZX=()=>zxP||(zxP=new Promise((ok,no)=>{
-  if(window.ZXing)return ok();
-  const sc=document.createElement('script');
-  sc.src='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
-  sc.onload=ok;sc.onerror=()=>{zxP=null;no(new Error('Could not load the scanner. Check your connection.'))};
-  document.head.appendChild(sc);
-}));
-const BC='weekly-shop-barcodes';
-const bcMap=()=>{try{return JSON.parse(localStorage.getItem(BC)||'{}')}catch(e){return{}}};
-function stopScan(){try{rdr&&rdr.reset()}catch(e){}rdr=null;$('scan').classList.add('hide')}
-async function lookup(code){
-  const m=bcMap();if(m[code])return m[code];
-  try{
-    const r=await fetch('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,brands');
-    const j=await r.json();
-    if(j&&j.status===1&&j.product&&j.product.product_name){
-      const b=(j.product.brands||'').split(',')[0].trim(),n=j.product.product_name.trim();
-      return b&&!n.toLowerCase().startsWith(b.toLowerCase())?b+' '+n:n;
-    }
-  }catch(e){}
-  return null;
-}
-async function addScanned(code,name){
-  const m=bcMap();m[code]=name;try{localStorage.setItem(BC,JSON.stringify(m))}catch(e){}
-  const n=await addItems([[name,'manual']]);stopScan();
-  say(n?'Added “'+name+'”.':'“'+name+'” is already on the list.');
-}
-$('scanCancel').onclick=stopScan;
-$('scanAdd').onclick=()=>{const n=$('scanName').value.trim();if(n&&pendingCode){$('scanName').value='';addScanned(pendingCode,n)}};
-$('scanBtn').onclick=async()=>{
-  $('scan').classList.remove('hide');$('scanAsk').classList.add('hide');$('scanMsg').textContent='Starting camera…';
-  try{
-    await loadZX();
-    const h=new Map();
-    h.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E]);
-    rdr=new ZXing.BrowserMultiFormatReader(h);let busy=false;
-    $('scanMsg').textContent='Point the camera at the barcode';
-    await rdr.decodeFromConstraints({video:{facingMode:'environment'}},$('scanVid'),async res=>{
-      if(!res||busy)return;busy=true;
-      const code=res.getText();
-      $('scanMsg').textContent='Looking up '+code+'…';
-      try{rdr.reset()}catch(e){}
-      const name=await lookup(code);
-      if(name)return addScanned(code,name);
-      pendingCode=code;$('scanMsg').textContent='Barcode '+code+' not found. Type the name:';
-      $('scanAsk').classList.remove('hide');$('scanName').focus();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  }catch(e){$('scanMsg').textContent='Couldn’t start the camera: '+(e&&e.message||'permission denied')+'. Tap Cancel and type the item instead.'}
 };
-function findRecipe(n){
-  if(!n)return null;
-  if(Array.isArray(n)){for(const x of n){const r=findRecipe(x);if(r)return r}return null}
-  if(typeof n==='object'){
-    const t=n['@type'];
-    if(t==='Recipe'||(Array.isArray(t)&&t.includes('Recipe')))return n;
-    if(n['@graph'])return findRecipe(n['@graph']);
-  }
-  return null;
-}
-const decodeHtml=t=>{const d=document.createElement('textarea');d.innerHTML=t;return d.value};
-async function importUrl(url){
-  const proxies=[
-    u=>'https://corsproxy.io/?url='+encodeURIComponent(u),
-    u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
-    u=>'https://api.codetabs.com/v1/proxy/?quest='+encodeURIComponent(u)
-  ];
-  let html=null;
-  for(const p of proxies){
-    try{const r=await fetch(p(url));if(r.ok){const t=await r.text();if(t&&t.length>500){html=t;break}}}catch(e){}
-  }
-  if(!html)throw new Error('Couldn’t reach that page.');
-  const doc=new DOMParser().parseFromString(html,'text/html');
-  let rec=null;
-  for(const sc of doc.querySelectorAll('script[type="application/ld+json"]')){
-    try{rec=findRecipe(JSON.parse(sc.textContent));if(rec)break}catch(e){}
-  }
-  if(!rec||!rec.recipeIngredient||!rec.recipeIngredient.length)throw new Error('No recipe found on that page.');
-  const ing=rec.recipeIngredient.map(x=>decodeHtml(String(x)).replace(/\s+/g,' ').trim()).filter(Boolean);
-  return{name:decodeHtml(String(rec.name||'')).trim()||(doc.title||'Imported recipe'),ingredients:ing};
-}
-$('urlBtn').onclick=async()=>{
-  const u=$('urlIn').value.trim();
-  if(!/^https?:\/\//i.test(u)){say('Paste a full link starting with https://');return}
-  const b=$('urlBtn');b.disabled=true;b.textContent='Loading…';say('');
-  try{
-    const r=await importUrl(u);
-    await C('recipes').add({name:r.name,ingredients:r.ingredients,inWeek:false,url:u});
-    $('urlIn').value='';
-    say('Added “'+r.name+'” with '+r.ingredients.length+' ingredients.');
-  }catch(e){say((e&&e.message||'Import failed.')+' You can paste the ingredients into the form below instead.')}
-  finally{b.disabled=false;b.textContent='Import recipe'}
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
 };
-$('urlClear').onclick=()=>{$('urlIn').value='';say('');$('urlIn').focus()};
-function setList(n){
-  cur=n;try{localStorage.setItem('weekly-shop-cur',n)}catch(e){}
-  $('lt-weekly').classList.toggle('on',n==='weekly');$('lt-xmas').classList.toggle('on',n==='xmas');
-  $('clearAll').textContent=n==='weekly'?'New week':'Clear list';
-  $('build').textContent=n==='weekly'?'Build from week plan':'Add ticked recipes';
-  say('');render();
-}
-$('lt-weekly').onclick=()=>setList('weekly');$('lt-xmas').onclick=()=>setList('xmas');
-$('build').onclick=()=>w(async()=>{
-  let skipped=0;const list=cur==='weekly'?S.staples.map(s=>[s.name,'staple']):[];
-  for(const rc of S.recipes.filter(r=>r.inWeek))for(const g of rc.ingredients||[]){if(PANTRY(g))skipped++;else list.push([g,rc.name])}
-  const n=await addItems(list);
-  say(n?('Added '+n+' item'+(n>1?'s':'')+' from staples and this week\'s recipes.'):'Nothing new to add. Tick recipes first, or add staples.');if(skipped)say($('msg').textContent+' Skipped '+skipped+' pantry basics.');
-});
-$('clearDone').onclick=()=>w(()=>par(L().filter(i=>i.done),i=>C('items').doc(i.id).delete()));
-$('clearAll').onclick=()=>{if(!confirm(cur==='weekly'?'Clear the whole list and untick all recipes for a new week?':'Clear the whole Xmas list?'))return;
-  w(async()=>{await par(L(),i=>C('items').doc(i.id).delete());if(cur==='weekly')await par(S.recipes.filter(r=>r.inWeek),r=>C('recipes').doc(r.id).update({inWeek:false}))})};
-
-$('cfgUrl').value=cfg.url||'';$('cfgCode').value=cfg.code||'';
-$('cfgSave').onclick=()=>{
-  cfg={url:$('cfgUrl').value.trim(),code:$('cfgCode').value.trim()};
-  try{localStorage.setItem(CFGKEY,JSON.stringify(cfg))}catch(e){}
-  if(base()){syncStatus('Connecting…');pull()}else syncStatus('Not syncing (stored on this phone only)');
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-setInterval(pull,5000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var $ = function (id) { return document.getElementById(id); };
+var S = { items: [], recipes: [], staples: [] };
+var cur = 'weekly';
+try {
+    if (localStorage.getItem('weekly-shop-cur') === 'xmas')
+        cur = 'xmas';
+}
+catch (e) { }
+var L = function () { return S.items.filter(function (i) { return (i.list || 'weekly') === cur; }); };
+function say(t) { $('msg').textContent = t || ''; }
+function el(tag, cls, txt) { var e = document.createElement(tag); if (cls)
+    e.className = cls; if (txt != null)
+    e.textContent = txt; return e; }
+var KEY = 'weekly-shop-v1', CFGKEY = 'weekly-shop-sync', COLS = ['items', 'recipes', 'staples'];
+var D = { items: {}, recipes: {}, staples: {} }, cfg = {}, pending = 0;
+try {
+    cfg = JSON.parse(localStorage.getItem(CFGKEY) || '{}');
+}
+catch (e) { }
+try {
+    var x = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (x)
+        D = { items: x.items || {}, recipes: x.recipes || {}, staples: x.staples || {} };
+}
+catch (e) { }
+var persist = function () { try {
+    localStorage.setItem(KEY, JSON.stringify(D));
+}
+catch (e) { } };
+var rid = function () { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); };
+var base = function () { return cfg.url && cfg.code ? cfg.url.replace(/\/+$/, '') + '/shop/' + encodeURIComponent(cfg.code) : null; };
+var syncStatus = function (t) { var e = $('syncStatus'); if (e)
+    e.textContent = t; };
+function rebuild() {
+    var e_1, _a;
+    try {
+        for (var COLS_1 = __values(COLS), COLS_1_1 = COLS_1.next(); !COLS_1_1.done; COLS_1_1 = COLS_1.next()) {
+            var k = COLS_1_1.value;
+            S[k] = Object.entries(D[k]).map(function (_a) {
+                var _b = __read(_a, 2), id = _b[0], v = _b[1];
+                return (__assign({ id: id }, v));
+            });
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (COLS_1_1 && !COLS_1_1.done && (_a = COLS_1.return)) _a.call(COLS_1);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
+    S.recipes.forEach(function (r) { if (!Array.isArray(r.ingredients))
+        r.ingredients = Object.values(r.ingredients || {}); });
+    render();
+}
+function remote(path, method, body) {
+    return __awaiter(this, void 0, void 0, function () {
+        var b, r, e_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    b = base();
+                    if (!b)
+                        return [2 /*return*/];
+                    pending++;
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, 4, 5]);
+                    return [4 /*yield*/, fetch(b + path + '.json', { method: method, headers: { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) })];
+                case 2:
+                    r = _a.sent();
+                    if (!r.ok)
+                        throw new Error('HTTP ' + r.status);
+                    syncStatus('Synced ' + new Date().toLocaleTimeString());
+                    return [3 /*break*/, 5];
+                case 3:
+                    e_2 = _a.sent();
+                    syncStatus('Sync problem: ' + e_2.message);
+                    return [3 /*break*/, 5];
+                case 4:
+                    pending--;
+                    return [7 /*endfinally*/];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+function pull() {
+    return __awaiter(this, void 0, void 0, function () {
+        var b, r, x, e_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    b = base();
+                    if (!b || pending)
+                        return [2 /*return*/];
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 8, , 9]);
+                    return [4 /*yield*/, fetch(b + '.json')];
+                case 2:
+                    r = _a.sent();
+                    if (!r.ok)
+                        throw new Error('HTTP ' + r.status);
+                    return [4 /*yield*/, r.json()];
+                case 3:
+                    x = _a.sent();
+                    if (!(x === null)) return [3 /*break*/, 6];
+                    if (!COLS.some(function (k) { return Object.keys(D[k]).length; })) return [3 /*break*/, 5];
+                    return [4 /*yield*/, remote('', 'PUT', D)];
+                case 4:
+                    _a.sent();
+                    _a.label = 5;
+                case 5: return [3 /*break*/, 7];
+                case 6:
+                    D = { items: x.items || {}, recipes: x.recipes || {}, staples: x.staples || {} };
+                    persist();
+                    rebuild();
+                    _a.label = 7;
+                case 7:
+                    syncStatus('Synced ' + new Date().toLocaleTimeString());
+                    return [3 /*break*/, 9];
+                case 8:
+                    e_3 = _a.sent();
+                    syncStatus('Sync problem: ' + e_3.message);
+                    return [3 /*break*/, 9];
+                case 9: return [2 /*return*/];
+            }
+        });
+    });
+}
+var C = function (name) { return ({
+    add: function (o) { var id = rid(); D[name][id] = o; persist(); rebuild(); remote('/' + name + '/' + id, 'PUT', o); return Promise.resolve({ id: id }); },
+    doc: function (id) { return ({
+        update: function (p) { if (D[name][id]) {
+            Object.assign(D[name][id], p);
+            persist();
+            rebuild();
+            remote('/' + name + '/' + id, 'PATCH', p);
+        } return Promise.resolve(); },
+        delete: function () { delete D[name][id]; persist(); rebuild(); remote('/' + name + '/' + id, 'DELETE'); return Promise.resolve(); }
+    }); }
+}); };
+function w(fn) {
+    return __awaiter(this, void 0, void 0, function () { var e_4; return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, fn()];
+            case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+            case 2:
+                e_4 = _a.sent();
+                say('Could not save: ' + (e_4 && e_4.message || 'error'));
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    }); });
+}
+var PANTRY = function (g) {
+    var s = g.toLowerCase();
+    if (/\bsalt\b/.test(s))
+        return true;
+    if (/\b(black|white|ground) pepper\b|^[\d\s.]*(pinch of |tsp |tsps )?pepper$/.test(s))
+        return true;
+    if (/\b(olive|vegetable|sunflower|rapeseed) oil\b|^[^a-z]*((tbsp|tsp|tablespoons?|teaspoons?|ml|dash|drizzle|splash|glug)s?\s+(of\s+)?)?oil\b/.test(s))
+        return true;
+    if (/\bflour\b/.test(s) && !/(self[- ]?raising|bread|strong|wholemeal|rice|gluten|spelt|00)\s+flour/.test(s))
+        return true;
+    if (/^[\d\s.\/]*(g|kg|tbsp|tsp|tbsps|tsps|tablespoons?|teaspoons?)?\s*(of\s+)?(caster |granulated |white )?sugar\b/.test(s) && !/icing|brown|muscovado|demerara|sugar snap/.test(s))
+        return true;
+    if (/stock cubes?|stock pots?|bouillon/.test(s))
+        return true;
+    if (/vinegar|soy sauce|ketchup|mustard|mayo/.test(s))
+        return true;
+    if (/\bbutter\b/.test(s) && !/butter beans?|(peanut|almond|cashew|nut) butter/.test(s))
+        return true;
+    if (/\bgarlic\b/.test(s) && !/garlic (bread|sauce|naan|baguette)/.test(s))
+        return true;
+    if (/baking powder|\bhoney\b/.test(s))
+        return true;
+    if (/\bmilk\b/.test(s) && !/coconut|condensed|evaporated|chocolate/.test(s)) {
+        var ml = null;
+        var m = s.match(/(\d+(?:\.\d+)?)\s*(ml|litres?|liters?|l|pints?|cups?)\b/);
+        if (m) {
+            var v = parseFloat(m[1]), u = m[2];
+            ml = u === 'ml' ? v : /^(litre|liter|l)/.test(u) ? v * 1000 : /^pint/.test(u) ? v * 568 : v * 240;
+        }
+        else if (/pint/.test(s))
+            ml = 568;
+        return ml === null || ml <= 250;
+    }
+    return false;
+};
+var par = function (a, f) { return __awaiter(void 0, void 0, void 0, function () { var k; return __generator(this, function (_a) {
+    switch (_a.label) {
+        case 0:
+            k = 0;
+            _a.label = 1;
+        case 1:
+            if (!(k < a.length)) return [3 /*break*/, 4];
+            return [4 /*yield*/, Promise.all(a.slice(k, k + 10).map(f))];
+        case 2:
+            _a.sent();
+            _a.label = 3;
+        case 3:
+            k += 10;
+            return [3 /*break*/, 1];
+        case 4: return [2 /*return*/];
+    }
+}); }); };
+var parseIng = function (t) { return t.split(/[\n,]+/).map(function (s) { return s.trim(); }).filter(Boolean); };
+document.querySelectorAll('nav button').forEach(function (b) { return b.onclick = function () {
+    document.querySelectorAll('nav button').forEach(function (x) { return x.classList.toggle('on', x === b); });
+    ['list', 'rec', 'sta'].forEach(function (v) { return $('v-' + v).classList.toggle('hide', v !== b.dataset.v); });
+    var T = { rec: '🍲 Recipes', sta: '🔁 Staples' };
+    $('h').textContent = T[b.dataset.v] || '';
+    $('h').classList.toggle('hide', b.dataset.v === 'list');
+}; });
+var CATS = ['Fruit & Veg', 'Meat & Fish', 'Dairy & Eggs', 'Bakery', 'Pasta, Rice & Cereal', 'Tins, Jars & Sauces', 'Baking, Spices & Oils', 'Frozen', 'Snacks & Treats', 'Drinks', 'Household', 'Other'];
+var RULES = [
+    ['Household', /\b(toilet|kitchen roll|bin bags?|washing|detergent|dishwasher|bleach|sponge|foil|cling ?film|nappies|shampoo|toothpaste|soap|deodorant|tissues|laundry|cleaning)/],
+    ['Frozen', /\b(frozen|ice cream|fish fingers|oven chips)/],
+    ['Fruit & Veg', /(lemon|lime) juice/],
+    ['Tins, Jars & Sauces', /(purée|puree|paste\b|tinned|\bcans?\b|\btins?\b|stock|bouillon|gravy|peanut butter|coconut (milk|cream)|passata|ketchup|mayo|mustard|vinegar|soy|sauce|jelly|\bjam\b|honey|syrup|baked beans|chickpeas|kidney beans|olives|pickle|soup)/],
+    ['Pasta, Rice & Cereal', /\b(pasta|lasagne|spaghetti|penne|fusilli|tagliatelle|macaroni|tortellini|ravioli|noodles?|rice|couscous|lentils?|oats|porridge|cereal|quinoa|bulgur|muesli|cornflakes)/],
+    ['Baking, Spices & Oils', /(\bflour|\bsugar|baking|yeast|cornflour|cocoa|vanilla|\bsalt\b|(black|white|ground) pepper|peppercorn|cumin|paprika|cinnamon|turmeric|oregano|\bspices?|\bdried|\boil\b|nutmeg|bicarb|icing|sprinkles|cooking chocolate)/],
+    ['Bakery', /\b(bread|rolls?\b|bagels?|wraps?\b|tortillas?|pitta|naan|baguette|croissants?|buns?\b|crumpets?|pastry|pizza base)/],
+    ['Dairy & Eggs', /(milk|\bcream|\bbutter\b|cheese|cheddar|parmesan|mozzarella|yog(h)?urt|\beggs?\b|crème|feta|halloumi|mascarpone|ricotta)/],
+    ['Meat & Fish', /\b(beef|mince|chicken|pork|lamb|bacon|sausages?|ham\b|turkey|steak|salmon|cod\b|fish|prawns?|tuna|haddock|chorizo|gammon|duck|mackerel|pancetta|meatballs?|burgers?|sardines)/],
+    ['Snacks & Treats', /(\b(crisps|biscuits?|chocolate|sweets|snacks?|popcorn|cake|cookies?|dessert)|walnuts?|peanuts?|cashews?|hazelnuts?|almonds?|pistachios?|\bnuts\b)/],
+    ['Drinks', /\b(juice|cordial|water\b|cola|wine|beer|tea\b|coffee|lager|cider|prosecco|drinks?|lemonade|smoothie)/],
+    ['Fruit & Veg', /\b(onion|garlic|celery|carrot|potato|tomato|pepper|mushroom|lettuce|salad|spinach|cucumber|broccoli|cauliflower|courgette|aubergine|leek|cabbage|apple|banana|orange|lemon|lime|berr|strawberr|raspberr|blueberr|grape|avocado|pear|ginger|chilli|sweetcorn|corn|peas|beans|parsnip|squash|pumpkin|herb|basil|parsley|thyme|coriander|rosemary|mint|sage|chives|dill|fruit|veg|kale|asparagus|radish|beetroot|swede|turnip|melon|mango|pineapple|peach|plum|cherr|rocket|watercress|fennel|shallot|celeriac)/]
+];
+var catOf = function (n) {
+    var e_5, _a;
+    var s = n.toLowerCase();
+    try {
+        for (var RULES_1 = __values(RULES), RULES_1_1 = RULES_1.next(); !RULES_1_1.done; RULES_1_1 = RULES_1.next()) {
+            var _b = __read(RULES_1_1.value, 2), c = _b[0], re = _b[1];
+            if (re.test(s))
+                return c;
+        }
+    }
+    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+    finally {
+        try {
+            if (RULES_1_1 && !RULES_1_1.done && (_a = RULES_1.return)) _a.call(RULES_1);
+        }
+        finally { if (e_5) throw e_5.error; }
+    }
+    return 'Other';
+};
+function renderItems() {
+    var e_6, _a, e_7, _b, e_8, _c;
+    var box = $('items');
+    box.textContent = '';
+    if (!L().length) {
+        box.appendChild(el('div', 'mut', 'Nothing on the list yet.'));
+        return;
+    }
+    var groups = {};
+    try {
+        for (var _d = __values(L()), _e = _d.next(); !_e.done; _e = _d.next()) {
+            var it = _e.value;
+            var c = catOf(it.name);
+            (groups[c] = groups[c] || []).push(it);
+        }
+    }
+    catch (e_6_1) { e_6 = { error: e_6_1 }; }
+    finally {
+        try {
+            if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
+        }
+        finally { if (e_6) throw e_6.error; }
+    }
+    try {
+        for (var CATS_1 = __values(CATS), CATS_1_1 = CATS_1.next(); !CATS_1_1.done; CATS_1_1 = CATS_1.next()) {
+            var cat = CATS_1_1.value;
+            var g = groups[cat];
+            if (!g)
+                continue;
+            box.appendChild(el('div', 'cat', cat + ' (' + g.length + ')'));
+            g.sort(function (a, b) { return (a.done - b.done) || a.name.localeCompare(b.name); });
+            var _loop_1 = function (it) {
+                var r = el('div', 'row' + (it.done ? ' done' : ''));
+                var cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.checked = !!it.done;
+                cb.onchange = function () { return w(function () { return C('items').doc(it.id).update({ done: cb.checked }); }); };
+                var t = el('div', 't');
+                t.appendChild(document.createTextNode(it.name));
+                if (it.src && it.src !== 'manual')
+                    t.appendChild(el('small', 'tag', it.src));
+                var x = el('button', 'x', '×');
+                x.setAttribute('aria-label', 'Remove');
+                x.onclick = function () { return w(function () { return C('items').doc(it.id).delete(); }); };
+                r.append(cb, t, x);
+                box.appendChild(r);
+            };
+            try {
+                for (var g_1 = (e_8 = void 0, __values(g)), g_1_1 = g_1.next(); !g_1_1.done; g_1_1 = g_1.next()) {
+                    var it = g_1_1.value;
+                    _loop_1(it);
+                }
+            }
+            catch (e_8_1) { e_8 = { error: e_8_1 }; }
+            finally {
+                try {
+                    if (g_1_1 && !g_1_1.done && (_c = g_1.return)) _c.call(g_1);
+                }
+                finally { if (e_8) throw e_8.error; }
+            }
+        }
+    }
+    catch (e_7_1) { e_7 = { error: e_7_1 }; }
+    finally {
+        try {
+            if (CATS_1_1 && !CATS_1_1.done && (_b = CATS_1.return)) _b.call(CATS_1);
+        }
+        finally { if (e_7) throw e_7.error; }
+    }
+}
+function renderRecipes() {
+    var e_9, _a;
+    var box = $('recipes');
+    box.textContent = '';
+    if (!S.recipes.length) {
+        box.appendChild(el('div', 'mut', 'No recipes yet.'));
+        return;
+    }
+    var _loop_2 = function (rc) {
+        var r = el('div', 'row');
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = !!rc.inWeek;
+        cb.onchange = function () { return w(function () { return C('recipes').doc(rc.id).update({ inWeek: cb.checked }); }); };
+        var t = el('div', 't');
+        t.appendChild(document.createTextNode(rc.name));
+        t.appendChild(el('small', 'ing', (rc.ingredients || []).join(', ')));
+        var x = el('button', 'x', '×');
+        x.onclick = function () { if (confirm('Delete "' + rc.name + '"?'))
+            w(function () { return C('recipes').doc(rc.id).delete(); }); };
+        r.append(cb, t, x);
+        box.appendChild(r);
+    };
+    try {
+        for (var _b = __values(__spreadArray([], __read(S.recipes), false).sort(function (a, b) { return a.name.localeCompare(b.name); })), _c = _b.next(); !_c.done; _c = _b.next()) {
+            var rc = _c.value;
+            _loop_2(rc);
+        }
+    }
+    catch (e_9_1) { e_9 = { error: e_9_1 }; }
+    finally {
+        try {
+            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+        }
+        finally { if (e_9) throw e_9.error; }
+    }
+}
+function renderStaples() {
+    var e_10, _a;
+    var box = $('staples');
+    box.textContent = '';
+    if (!S.staples.length) {
+        box.appendChild(el('div', 'mut', 'No staples yet.'));
+        return;
+    }
+    var _loop_3 = function (s) {
+        var r = el('div', 'row');
+        var t = el('div', 't', s.name);
+        var x = el('button', 'x', '×');
+        x.onclick = function () { return w(function () { return C('staples').doc(s.id).delete(); }); };
+        r.append(t, x);
+        box.appendChild(r);
+    };
+    try {
+        for (var _b = __values(__spreadArray([], __read(S.staples), false).sort(function (a, b) { return a.name.localeCompare(b.name); })), _c = _b.next(); !_c.done; _c = _b.next()) {
+            var s = _c.value;
+            _loop_3(s);
+        }
+    }
+    catch (e_10_1) { e_10 = { error: e_10_1 }; }
+    finally {
+        try {
+            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+        }
+        finally { if (e_10) throw e_10.error; }
+    }
+}
+var render = function () {
+    renderItems();
+    renderRecipes();
+    renderStaples();
+    var all = L().length > 0 && L().every(function (i) { return i.done; });
+    $('tickAll').textContent = all ? 'Untick all' : 'Tick all';
+};
+$('tickAll').onclick = function () { return w(function () { return __awaiter(void 0, void 0, void 0, function () {
+    var target;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                target = !L().every(function (i) { return i.done; });
+                return [4 /*yield*/, par(L().filter(function (i) { return !!i.done !== target; }), function (i) { return C('items').doc(i.id).update({ done: target }); })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); }); };
+function addItems(list) {
+    return __awaiter(this, void 0, void 0, function () {
+        var have, n, fresh, list_1, list_1_1, _a, name, src, k;
+        var e_11, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    have = new Set(L().map(function (i) { return i.name.toLowerCase(); }));
+                    n = 0;
+                    fresh = [];
+                    try {
+                        for (list_1 = __values(list), list_1_1 = list_1.next(); !list_1_1.done; list_1_1 = list_1.next()) {
+                            _a = __read(list_1_1.value, 2), name = _a[0], src = _a[1];
+                            k = name.toLowerCase();
+                            if (have.has(k))
+                                continue;
+                            have.add(k);
+                            n++;
+                            fresh.push({ name: name, src: src });
+                        }
+                    }
+                    catch (e_11_1) { e_11 = { error: e_11_1 }; }
+                    finally {
+                        try {
+                            if (list_1_1 && !list_1_1.done && (_b = list_1.return)) _b.call(list_1);
+                        }
+                        finally { if (e_11) throw e_11.error; }
+                    }
+                    return [4 /*yield*/, par(fresh, function (o) { return C('items').add({ name: o.name, done: false, src: o.src, list: cur, ts: Date.now() }); })];
+                case 1:
+                    _c.sent();
+                    return [2 /*return*/, n];
+            }
+        });
+    });
+}
+$('addItem').onclick = function () { var v = $('newItem').value.trim(); if (!v)
+    return; $('newItem').value = ''; w(function () { return addItems([[v, 'manual']]); }); };
+$('newItem').onkeydown = function (e) { if (e.key === 'Enter')
+    $('addItem').click(); };
+$('addSta').onclick = function () { var v = $('newSta').value.trim(); if (!v)
+    return; $('newSta').value = ''; w(function () { return C('staples').add({ name: v }); }); };
+$('newSta').onkeydown = function (e) { if (e.key === 'Enter')
+    $('addSta').click(); };
+$('addRec').onclick = function () {
+    var name = $('rName').value.trim(), ing = parseIng($('rIng').value);
+    if (!name) {
+        say('Give the recipe a name.');
+        return;
+    }
+    $('rName').value = '';
+    $('rIng').value = '';
+    say('');
+    w(function () { return C('recipes').add({ name: name, ingredients: ing, inWeek: false }); });
+};
+var zxP = null, rdr = null, pendingCode = null;
+var loadZX = function () { return zxP || (zxP = new Promise(function (ok, no) {
+    if (window.ZXing)
+        return ok();
+    var sc = document.createElement('script');
+    sc.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+    sc.onload = ok;
+    sc.onerror = function () { zxP = null; no(new Error('Could not load the scanner. Check your connection.')); };
+    document.head.appendChild(sc);
+})); };
+var BC = 'weekly-shop-barcodes';
+var bcMap = function () { try {
+    return JSON.parse(localStorage.getItem(BC) || '{}');
+}
+catch (e) {
+    return {};
+} };
+function stopScan() { try {
+    rdr && rdr.reset();
+}
+catch (e) { } rdr = null; $('scan').classList.add('hide'); }
+function lookup(code) {
+    return __awaiter(this, void 0, void 0, function () {
+        var m, r, j, b, n, e_12;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    m = bcMap();
+                    if (m[code])
+                        return [2 /*return*/, m[code]];
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, fetch('https://world.openfoodfacts.org/api/v2/product/' + encodeURIComponent(code) + '.json?fields=product_name,brands')];
+                case 2:
+                    r = _a.sent();
+                    return [4 /*yield*/, r.json()];
+                case 3:
+                    j = _a.sent();
+                    if (j && j.status === 1 && j.product && j.product.product_name) {
+                        b = (j.product.brands || '').split(',')[0].trim(), n = j.product.product_name.trim();
+                        return [2 /*return*/, b && !n.toLowerCase().startsWith(b.toLowerCase()) ? b + ' ' + n : n];
+                    }
+                    return [3 /*break*/, 5];
+                case 4:
+                    e_12 = _a.sent();
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/, null];
+            }
+        });
+    });
+}
+function addScanned(code, name) {
+    return __awaiter(this, void 0, void 0, function () {
+        var m, n;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    m = bcMap();
+                    m[code] = name;
+                    try {
+                        localStorage.setItem(BC, JSON.stringify(m));
+                    }
+                    catch (e) { }
+                    return [4 /*yield*/, addItems([[name, 'manual']])];
+                case 1:
+                    n = _a.sent();
+                    stopScan();
+                    say(n ? 'Added “' + name + '”.' : '“' + name + '” is already on the list.');
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+$('scanCancel').onclick = stopScan;
+$('scanAdd').onclick = function () { var n = $('scanName').value.trim(); if (n && pendingCode) {
+    $('scanName').value = '';
+    addScanned(pendingCode, n);
+} };
+$('scanBtn').onclick = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var h, busy_1, e_13;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                $('scan').classList.remove('hide');
+                $('scanAsk').classList.add('hide');
+                $('scanMsg').textContent = 'Starting camera…';
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, loadZX()];
+            case 2:
+                _a.sent();
+                h = new Map();
+                h.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.EAN_8, ZXing.BarcodeFormat.UPC_A, ZXing.BarcodeFormat.UPC_E]);
+                rdr = new ZXing.BrowserMultiFormatReader(h);
+                busy_1 = false;
+                $('scanMsg').textContent = 'Point the camera at the barcode';
+                return [4 /*yield*/, rdr.decodeFromConstraints({ video: { facingMode: 'environment' } }, $('scanVid'), function (res) { return __awaiter(void 0, void 0, void 0, function () {
+                        var code, name;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    if (!res || busy_1)
+                                        return [2 /*return*/];
+                                    busy_1 = true;
+                                    code = res.getText();
+                                    $('scanMsg').textContent = 'Looking up ' + code + '…';
+                                    try {
+                                        rdr.reset();
+                                    }
+                                    catch (e) { }
+                                    return [4 /*yield*/, lookup(code)];
+                                case 1:
+                                    name = _a.sent();
+                                    if (name)
+                                        return [2 /*return*/, addScanned(code, name)];
+                                    pendingCode = code;
+                                    $('scanMsg').textContent = 'Barcode ' + code + ' not found. Type the name:';
+                                    $('scanAsk').classList.remove('hide');
+                                    $('scanName').focus();
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); })];
+            case 3:
+                _a.sent();
+                return [3 /*break*/, 5];
+            case 4:
+                e_13 = _a.sent();
+                $('scanMsg').textContent = 'Couldn’t start the camera: ' + (e_13 && e_13.message || 'permission denied') + '. Tap Cancel and type the item instead.';
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+function findRecipe(n) {
+    var e_14, _a;
+    if (!n)
+        return null;
+    if (Array.isArray(n)) {
+        try {
+            for (var n_1 = __values(n), n_1_1 = n_1.next(); !n_1_1.done; n_1_1 = n_1.next()) {
+                var x = n_1_1.value;
+                var r = findRecipe(x);
+                if (r)
+                    return r;
+            }
+        }
+        catch (e_14_1) { e_14 = { error: e_14_1 }; }
+        finally {
+            try {
+                if (n_1_1 && !n_1_1.done && (_a = n_1.return)) _a.call(n_1);
+            }
+            finally { if (e_14) throw e_14.error; }
+        }
+        return null;
+    }
+    if (typeof n === 'object') {
+        var t = n['@type'];
+        if (t === 'Recipe' || (Array.isArray(t) && t.includes('Recipe')))
+            return n;
+        if (n['@graph'])
+            return findRecipe(n['@graph']);
+    }
+    return null;
+}
+var decodeHtml = function (t) { var d = document.createElement('textarea'); d.innerHTML = t; return d.value; };
+function importUrl(url) {
+    return __awaiter(this, void 0, void 0, function () {
+        var proxies, html, proxies_1, proxies_1_1, p, r, t, e_15, e_16_1, doc, rec, _a, _b, sc, ing;
+        var e_16, _c, e_17, _d;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
+                case 0:
+                    proxies = [
+                        function (u) { return 'https://corsproxy.io/?url=' + encodeURIComponent(u); },
+                        function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
+                        function (u) { return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u); }
+                    ];
+                    html = null;
+                    _e.label = 1;
+                case 1:
+                    _e.trys.push([1, 10, 11, 12]);
+                    proxies_1 = __values(proxies), proxies_1_1 = proxies_1.next();
+                    _e.label = 2;
+                case 2:
+                    if (!!proxies_1_1.done) return [3 /*break*/, 9];
+                    p = proxies_1_1.value;
+                    _e.label = 3;
+                case 3:
+                    _e.trys.push([3, 7, , 8]);
+                    return [4 /*yield*/, fetch(p(url))];
+                case 4:
+                    r = _e.sent();
+                    if (!r.ok) return [3 /*break*/, 6];
+                    return [4 /*yield*/, r.text()];
+                case 5:
+                    t = _e.sent();
+                    if (t && t.length > 500) {
+                        html = t;
+                        return [3 /*break*/, 9];
+                    }
+                    _e.label = 6;
+                case 6: return [3 /*break*/, 8];
+                case 7:
+                    e_15 = _e.sent();
+                    return [3 /*break*/, 8];
+                case 8:
+                    proxies_1_1 = proxies_1.next();
+                    return [3 /*break*/, 2];
+                case 9: return [3 /*break*/, 12];
+                case 10:
+                    e_16_1 = _e.sent();
+                    e_16 = { error: e_16_1 };
+                    return [3 /*break*/, 12];
+                case 11:
+                    try {
+                        if (proxies_1_1 && !proxies_1_1.done && (_c = proxies_1.return)) _c.call(proxies_1);
+                    }
+                    finally { if (e_16) throw e_16.error; }
+                    return [7 /*endfinally*/];
+                case 12:
+                    if (!html)
+                        throw new Error('Couldn’t reach that page.');
+                    doc = new DOMParser().parseFromString(html, 'text/html');
+                    rec = null;
+                    try {
+                        for (_a = __values(doc.querySelectorAll('script[type="application/ld+json"]')), _b = _a.next(); !_b.done; _b = _a.next()) {
+                            sc = _b.value;
+                            try {
+                                rec = findRecipe(JSON.parse(sc.textContent));
+                                if (rec)
+                                    break;
+                            }
+                            catch (e) { }
+                        }
+                    }
+                    catch (e_17_1) { e_17 = { error: e_17_1 }; }
+                    finally {
+                        try {
+                            if (_b && !_b.done && (_d = _a.return)) _d.call(_a);
+                        }
+                        finally { if (e_17) throw e_17.error; }
+                    }
+                    if (!rec || !rec.recipeIngredient || !rec.recipeIngredient.length)
+                        throw new Error('No recipe found on that page.');
+                    ing = rec.recipeIngredient.map(function (x) { return decodeHtml(String(x)).replace(/\s+/g, ' ').trim(); }).filter(Boolean);
+                    return [2 /*return*/, { name: decodeHtml(String(rec.name || '')).trim() || (doc.title || 'Imported recipe'), ingredients: ing }];
+            }
+        });
+    });
+}
+$('urlBtn').onclick = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var u, b, r, e_18;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                u = $('urlIn').value.trim();
+                if (!/^https?:\/\//i.test(u)) {
+                    say('Paste a full link starting with https://');
+                    return [2 /*return*/];
+                }
+                b = $('urlBtn');
+                b.disabled = true;
+                b.textContent = 'Loading…';
+                say('');
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 4, 5, 6]);
+                return [4 /*yield*/, importUrl(u)];
+            case 2:
+                r = _a.sent();
+                return [4 /*yield*/, C('recipes').add({ name: r.name, ingredients: r.ingredients, inWeek: false, url: u })];
+            case 3:
+                _a.sent();
+                $('urlIn').value = '';
+                say('Added “' + r.name + '” with ' + r.ingredients.length + ' ingredients.');
+                return [3 /*break*/, 6];
+            case 4:
+                e_18 = _a.sent();
+                say((e_18 && e_18.message || 'Import failed.') + ' You can paste the ingredients into the form below instead.');
+                return [3 /*break*/, 6];
+            case 5:
+                b.disabled = false;
+                b.textContent = 'Import recipe';
+                return [7 /*endfinally*/];
+            case 6: return [2 /*return*/];
+        }
+    });
+}); };
+$('urlClear').onclick = function () { $('urlIn').value = ''; say(''); $('urlIn').focus(); };
+function setList(n) {
+    cur = n;
+    try {
+        localStorage.setItem('weekly-shop-cur', n);
+    }
+    catch (e) { }
+    $('lt-weekly').classList.toggle('on', n === 'weekly');
+    $('lt-xmas').classList.toggle('on', n === 'xmas');
+    $('clearAll').textContent = n === 'weekly' ? 'New week' : 'Clear list';
+    $('build').textContent = n === 'weekly' ? 'Build from week plan' : 'Add ticked recipes';
+    say('');
+    render();
+}
+$('lt-weekly').onclick = function () { return setList('weekly'); };
+$('lt-xmas').onclick = function () { return setList('xmas'); };
+$('build').onclick = function () { return w(function () { return __awaiter(void 0, void 0, void 0, function () {
+    var skipped, list, _a, _b, rc, _c, _d, g, n;
+    var e_19, _e, e_20, _f;
+    return __generator(this, function (_g) {
+        switch (_g.label) {
+            case 0:
+                skipped = 0;
+                list = cur === 'weekly' ? S.staples.map(function (s) { return [s.name, 'staple']; }) : [];
+                try {
+                    for (_a = __values(S.recipes.filter(function (r) { return r.inWeek; })), _b = _a.next(); !_b.done; _b = _a.next()) {
+                        rc = _b.value;
+                        try {
+                            for (_c = (e_20 = void 0, __values(rc.ingredients || [])), _d = _c.next(); !_d.done; _d = _c.next()) {
+                                g = _d.value;
+                                if (PANTRY(g))
+                                    skipped++;
+                                else
+                                    list.push([g, rc.name]);
+                            }
+                        }
+                        catch (e_20_1) { e_20 = { error: e_20_1 }; }
+                        finally {
+                            try {
+                                if (_d && !_d.done && (_f = _c.return)) _f.call(_c);
+                            }
+                            finally { if (e_20) throw e_20.error; }
+                        }
+                    }
+                }
+                catch (e_19_1) { e_19 = { error: e_19_1 }; }
+                finally {
+                    try {
+                        if (_b && !_b.done && (_e = _a.return)) _e.call(_a);
+                    }
+                    finally { if (e_19) throw e_19.error; }
+                }
+                return [4 /*yield*/, addItems(list)];
+            case 1:
+                n = _g.sent();
+                say(n ? ('Added ' + n + ' item' + (n > 1 ? 's' : '') + ' from staples and this week\'s recipes.') : 'Nothing new to add. Tick recipes first, or add staples.');
+                if (skipped)
+                    say($('msg').textContent + ' Skipped ' + skipped + ' pantry basics.');
+                return [2 /*return*/];
+        }
+    });
+}); }); };
+$('clearDone').onclick = function () { return w(function () { return par(L().filter(function (i) { return i.done; }), function (i) { return C('items').doc(i.id).delete(); }); }); };
+$('clearAll').onclick = function () {
+    if (!confirm(cur === 'weekly' ? 'Clear the whole list and untick all recipes for a new week?' : 'Clear the whole Xmas list?'))
+        return;
+    w(function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, par(L(), function (i) { return C('items').doc(i.id).delete(); })];
+            case 1:
+                _a.sent();
+                if (!(cur === 'weekly')) return [3 /*break*/, 3];
+                return [4 /*yield*/, par(S.recipes.filter(function (r) { return r.inWeek; }), function (r) { return C('recipes').doc(r.id).update({ inWeek: false }); })];
+            case 2:
+                _a.sent();
+                _a.label = 3;
+            case 3: return [2 /*return*/];
+        }
+    }); }); });
+};
+$('cfgUrl').value = cfg.url || '';
+$('cfgCode').value = cfg.code || '';
+$('cfgSave').onclick = function () {
+    cfg = { url: $('cfgUrl').value.trim(), code: $('cfgCode').value.trim() };
+    try {
+        localStorage.setItem(CFGKEY, JSON.stringify(cfg));
+    }
+    catch (e) { }
+    if (base()) {
+        syncStatus('Connecting…');
+        pull();
+    }
+    else
+        syncStatus('Not syncing (stored on this phone only)');
+};
+setInterval(pull, 5000);
+document.addEventListener('visibilitychange', function () { if (!document.hidden)
+    pull(); });
 setList(cur);
 rebuild();
-if(base())pull();
+if (base())
+    pull();
+
+;window.__bootDone&&window.__bootDone();
 </script>
 </body>
 </html>
