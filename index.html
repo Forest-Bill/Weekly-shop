@@ -35,13 +35,14 @@ button.x{border:0;background:none;color:var(--dn);font-size:20px;padding:0 6px}
 input[type=checkbox]{width:22px;height:22px;accent-color:var(--ac)}
 .cat{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ac);padding:14px 0 2px;border-bottom:1px solid var(--bd)}
 .cat:first-child{padding-top:2px}
-a.s{display:inline-block;text-decoration:none;border:1px solid var(--bd);border-radius:10px;padding:11px 14px;font-weight:600;color:var(--ac)}
-.off{opacity:.45;pointer-events:none}
 #scan{position:fixed;inset:0;z-index:50;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
 #scan.hide{display:none}
 #scan video{width:100%;max-width:520px;border-radius:12px;background:#111}
 #scanAsk{display:flex;gap:8px;width:100%;max-width:520px}
 #scanAsk.hide{display:none}
+.lists{display:flex;gap:8px;margin:4px 0 14px}
+.lists button{flex:1;padding:14px 6px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--mut);font:inherit;font-size:17px;font-weight:600;-webkit-tap-highlight-color:transparent}
+.lists button.on{background:var(--ac);color:var(--acx);border-color:var(--ac)}
 .tag{font-size:12px;color:var(--mut)}
 .mut{color:var(--mut);font-size:14px}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
@@ -51,11 +52,12 @@ small.ing{display:block;color:var(--mut);font-size:13px}
 </head>
 <body>
 <main>
-<h1 id="h"></h1>
+<h1 id="h" class="hide"></h1>
 <div id="msg" class="mut" style="margin-bottom:8px"></div>
 <section id="v-list">
+  <div class="lists"><button id="lt-weekly" class="on">🛒 Weekly Shop</button><button id="lt-xmas">🎄 Xmas Shop</button></div>
   <div class="add"><input type="text" id="newItem" placeholder="Add an item…" autocomplete="off"><button class="p" id="addItem">Add</button></div>
-  <div class="acts"><button class="s" id="build">Build from week plan</button><button class="s" id="scanBtn">📷 Scan barcode</button><a class="s off" id="wa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a><button class="s" id="tickAll">Tick all</button><button class="s" id="clearDone">Clear ticked</button><button class="s" id="clearAll">New week</button></div>
+  <div class="acts"><button class="s" id="build">Build from week plan</button><button class="s" id="scanBtn">📷 Scan barcode</button><button class="s" id="tickAll">Tick all</button><button class="s" id="clearDone">Clear ticked</button><button class="s" id="clearAll">New week</button></div>
   <div class="card" id="items"></div>
 </section>
 <section id="v-rec" class="hide">
@@ -101,7 +103,8 @@ small.ing{display:block;color:var(--mut);font-size:13px}
 <script>
 const $=id=>document.getElementById(id);
 const S={items:[],recipes:[],staples:[]};
-$('h').textContent='🛒 Weekly Shop';
+let cur='weekly';try{if(localStorage.getItem('weekly-shop-cur')==='xmas')cur='xmas'}catch(e){}
+const L=()=>S.items.filter(i=>(i.list||'weekly')===cur);
 function say(t){$('msg').textContent=t||''}
 function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
 const KEY='weekly-shop-v1',CFGKEY='weekly-shop-sync',COLS=['items','recipes','staples'];
@@ -167,6 +170,7 @@ const parseIng=t=>t.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean);
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
   ['list','rec','sta'].forEach(v=>$('v-'+v).classList.toggle('hide',v!==b.dataset.v));
+  const T={rec:'🍲 Recipes',sta:'🔁 Staples'};$('h').textContent=T[b.dataset.v]||'';$('h').classList.toggle('hide',b.dataset.v==='list');
 });
 
 const CATS=['Fruit & Veg','Meat & Fish','Dairy & Eggs','Bakery','Pasta, Rice & Cereal','Tins, Jars & Sauces','Baking, Spices & Oils','Frozen','Snacks & Treats','Drinks','Household','Other'];
@@ -187,8 +191,8 @@ const RULES=[
 const catOf=n=>{const s=n.toLowerCase();for(const [c,re] of RULES)if(re.test(s))return c;return 'Other'};
 function renderItems(){
   const box=$('items');box.textContent='';
-  if(!S.items.length){box.appendChild(el('div','mut','Nothing on the list yet.'));return}
-  const groups={};for(const it of S.items){const c=catOf(it.name);(groups[c]=groups[c]||[]).push(it)}
+  if(!L().length){box.appendChild(el('div','mut','Nothing on the list yet.'));return}
+  const groups={};for(const it of L()){const c=catOf(it.name);(groups[c]=groups[c]||[]).push(it)}
   for(const cat of CATS){const g=groups[cat];if(!g)continue;
   box.appendChild(el('div','cat',cat+' ('+g.length+')'));
   g.sort((a,b)=>(a.done-b.done)||a.name.localeCompare(b.name));
@@ -225,19 +229,19 @@ function renderStaples(){
     r.append(t,x);box.appendChild(r);
   }
 }
-const render=()=>{renderItems();renderRecipes();renderStaples();updateWa();
-  const all=S.items.length>0&&S.items.every(i=>i.done);$('tickAll').textContent=all?'Untick all':'Tick all'};
+const render=()=>{renderItems();renderRecipes();renderStaples();
+  const all=L().length>0&&L().every(i=>i.done);$('tickAll').textContent=all?'Untick all':'Tick all'};
 $('tickAll').onclick=()=>w(async()=>{
-  const target=!S.items.every(i=>i.done);
-  await par(S.items.filter(i=>!!i.done!==target),i=>C('items').doc(i.id).update({done:target}));
+  const target=!L().every(i=>i.done);
+  await par(L().filter(i=>!!i.done!==target),i=>C('items').doc(i.id).update({done:target}));
 });
 
 async function addItems(list){
-  const have=new Set(S.items.map(i=>i.name.toLowerCase()));let n=0;const fresh=[];
+  const have=new Set(L().map(i=>i.name.toLowerCase()));let n=0;const fresh=[];
   for(const [name,src] of list){
     const k=name.toLowerCase();if(have.has(k))continue;have.add(k);n++;fresh.push({name,src});
     }
-  await par(fresh,o=>C('items').add({name:o.name,done:false,src:o.src,ts:Date.now()}));
+  await par(fresh,o=>C('items').add({name:o.name,done:false,src:o.src,list:cur,ts:Date.now()}));
   return n;
 }
 
@@ -250,15 +254,6 @@ $('addRec').onclick=()=>{
   if(!name){say('Give the recipe a name.');return}
   $('rName').value='';$('rIng').value='';say('');
   w(()=>C('recipes').add({name,ingredients:ing,inWeek:false}));
-};
-const updateWa=()=>{
-  const left=S.items.filter(i=>!i.done);
-  const a=$('wa');if(!left.length){a.removeAttribute('href');a.classList.add('off');return}
-  const g={};for(const i of left){const c=catOf(i.name);(g[c]=g[c]||[]).push(i.name)}
-  let t='🛒 Shopping list\n';
-  for(const c of CATS){if(!g[c])continue;t+='\n*'+c+'*\n'+g[c].sort().map(n=>'• '+n).join('\n')+'\n'}
-  t=t.trim();
-  a.href='https://wa.me/?text='+encodeURIComponent(t);a.classList.remove('off');
 };
 let zxP=null,rdr=null,pendingCode=null;
 const loadZX=()=>zxP||(zxP=new Promise((ok,no)=>{
@@ -354,15 +349,23 @@ $('urlBtn').onclick=async()=>{
   finally{b.disabled=false;b.textContent='Import recipe'}
 };
 $('urlClear').onclick=()=>{$('urlIn').value='';say('');$('urlIn').focus()};
+function setList(n){
+  cur=n;try{localStorage.setItem('weekly-shop-cur',n)}catch(e){}
+  $('lt-weekly').classList.toggle('on',n==='weekly');$('lt-xmas').classList.toggle('on',n==='xmas');
+  $('clearAll').textContent=n==='weekly'?'New week':'Clear list';
+  $('build').textContent=n==='weekly'?'Build from week plan':'Add ticked recipes';
+  say('');render();
+}
+$('lt-weekly').onclick=()=>setList('weekly');$('lt-xmas').onclick=()=>setList('xmas');
 $('build').onclick=()=>w(async()=>{
-  let skipped=0;const list=S.staples.map(s=>[s.name,'staple']);
+  let skipped=0;const list=cur==='weekly'?S.staples.map(s=>[s.name,'staple']):[];
   for(const rc of S.recipes.filter(r=>r.inWeek))for(const g of rc.ingredients||[]){if(PANTRY(g))skipped++;else list.push([g,rc.name])}
   const n=await addItems(list);
   say(n?('Added '+n+' item'+(n>1?'s':'')+' from staples and this week\'s recipes.'):'Nothing new to add. Tick recipes first, or add staples.');if(skipped)say($('msg').textContent+' Skipped '+skipped+' pantry basics.');
 });
-$('clearDone').onclick=()=>w(()=>par(S.items.filter(i=>i.done),i=>C('items').doc(i.id).delete()));
-$('clearAll').onclick=()=>{if(!confirm('Clear the whole list and untick all recipes for a new week?'))return;
-  w(async()=>{await par(S.items,i=>C('items').doc(i.id).delete());await par(S.recipes.filter(r=>r.inWeek),r=>C('recipes').doc(r.id).update({inWeek:false}))})};
+$('clearDone').onclick=()=>w(()=>par(L().filter(i=>i.done),i=>C('items').doc(i.id).delete()));
+$('clearAll').onclick=()=>{if(!confirm(cur==='weekly'?'Clear the whole list and untick all recipes for a new week?':'Clear the whole Xmas list?'))return;
+  w(async()=>{await par(L(),i=>C('items').doc(i.id).delete());if(cur==='weekly')await par(S.recipes.filter(r=>r.inWeek),r=>C('recipes').doc(r.id).update({inWeek:false}))})};
 
 $('cfgUrl').value=cfg.url||'';$('cfgCode').value=cfg.code||'';
 $('cfgSave').onclick=()=>{
@@ -372,6 +375,7 @@ $('cfgSave').onclick=()=>{
 };
 setInterval(pull,5000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
+setList(cur);
 rebuild();
 if(base())pull();
 </script>
