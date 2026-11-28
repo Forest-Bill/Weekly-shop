@@ -5,40 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cheese World Cup</title>
 <meta name="description" content="Cheese World Cup: a knockout cheese tasting tournament with judges, byes and a grand final.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Cpath d=%22M8 70 L70 18 L92 40 L92 86 L8 90Z%22 fill=%22%23ffd21f%22/%3E%3Ccircle cx=%2240%22 cy=%2270%22 r=%227%22 fill=%22%23e09a00%22/%3E%3Ccircle cx=%2272%22 cy=%2262%22 r=%225%22 fill=%22%23e09a00%22/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Cpath d=%22M8 70 L70 18 L92 40 L92 86 L8 90Z%22 fill=%22%23f7a21b%22/%3E%3Ccircle cx=%2240%22 cy=%2270%22 r=%227%22 fill=%22%23b35a00%22/%3E%3Ccircle cx=%2272%22 cy=%2262%22 r=%225%22 fill=%22%23b35a00%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600;800&family=Luckiest+Guy&display=swap" rel="stylesheet">
 <style>
 /* VOICE: matchday host on a big screen — loud, cheerful, a bit daft.
-   IDEA: the organiser's Excel wallchart brought to life: yellow boxes, green bars, white slots.
-   PICTURE: the mirrored bracket meeting at the final, under cheesy 3D lettering and drawn cheeses.
-   COLOUR and TYPE: white page, #FFFF00 boxes, #339966 bars; Luckiest Guy for cheese lettering, Archivo Black bars, Archivo text.
-   LAYOUT: title band, then bracket left → final ← right; matches open as a full-screen tasting stage. */
-:root{color-scheme:light;--y:#ffff00;--g:#339966;--gd:#25744c;--w:#fff;--ink:#1b1b12;--muted:#5d6156;--chz:#ffd21f;--chz2:#f0a000}
+   IDEA: the organiser's wallchart laid out on a honey-toned acacia cheese board, grain and knots.
+   PICTURE: cheddar-block title with holes; the mirrored draw meeting at the final.
+   COLOUR and TYPE: acacia board, cream boxes, cheese-yellow bars; cheddar SVG lettering, Archivo Black bars, Archivo text.
+   LAYOUT: title band, then draw left → final ← right; games open as a full-screen tasting stage. */
+:root{color-scheme:light;--pitch:#0d3d2b;--pitch2:#11492f;--box:#fff7d6;--bar:#ffcc33;--barink:#1d1a10;--ink:#1d1a10;--muted:#fbead0;--dk:#0d3d2b;--win:#1f7a4d;--line:rgba(255,255,255,.22);--chd:#f7a21b;--wood:radial-gradient(ellipse at 50% 40%,transparent 50%,rgba(60,30,8,.32)),url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22900%22 height=%22900%22 viewBox=%220 0 900 900%22 preserveAspectRatio=%22xMidYMid slice%22%3E%3Cfilter id=%22t%22 x=%220%22 y=%220%22 width=%22100%25%22 height=%22100%25%22 color-interpolation-filters=%22sRGB%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.006 0.0007%22 numOctaves=%223%22 seed=%223%22 result=%22b%22/%3E%3CfeColorMatrix in=%22b%22 values=%220 0 0 0 0.84 0 0 0 0 0.66 0 0 0 0 0.48 2.6 0 0 0 -1.25%22 result=%22lt%22/%3E%3CfeColorMatrix in=%22b%22 values=%220 0 0 0 0.52 0 0 0 0 0.33 0 0 0 0 0.19 -2.4 0 0 0 1.05%22 result=%22dk%22/%3E%3CfeMerge%3E%3CfeMergeNode in=%22dk%22/%3E%3CfeMergeNode in=%22lt%22/%3E%3C/feMerge%3E%3C/filter%3E%3Cfilter id=%22g%22 x=%220%22 y=%220%22 width=%22100%25%22 height=%22100%25%22 color-interpolation-filters=%22sRGB%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.25 0.006%22 numOctaves=%224%22 seed=%228%22 result=%22n%22/%3E%3CfeColorMatrix in=%22n%22 values=%220 0 0 0 0.42 0 0 0 0 0.25 0 0 0 0 0.12 0 0 0 2.0 -0.95%22 result=%22d%22/%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.035 0.0025%22 numOctaves=%223%22 seed=%2213%22 result=%22n3%22/%3E%3CfeColorMatrix in=%22n3%22 values=%220 0 0 0 0.45 0 0 0 0 0.27 0 0 0 0 0.13 0 0 0 2.2 -1.02%22 result=%22d2%22/%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.12 0.004%22 numOctaves=%223%22 seed=%2221%22 result=%22n2%22/%3E%3CfeColorMatrix in=%22n2%22 values=%220 0 0 0 0.9 0 0 0 0 0.74 0 0 0 0 0.56 0 0 0 1.8 -0.85%22 result=%22l%22/%3E%3CfeMerge result=%22m%22%3E%3CfeMergeNode in=%22d2%22/%3E%3CfeMergeNode in=%22d%22/%3E%3CfeMergeNode in=%22l%22/%3E%3C/feMerge%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.0009 0.0013%22 numOctaves=%222%22 seed=%225%22 result=%22w%22/%3E%3CfeDisplacementMap in=%22m%22 in2=%22w%22 scale=%22110%22 xChannelSelector=%22R%22 yChannelSelector=%22G%22/%3E%3C/filter%3E%3Cfilter id=%22p%22 x=%220%22 y=%220%22 width=%22100%25%22 height=%22100%25%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.6 0.15%22 numOctaves=%222%22 seed=%222%22/%3E%3CfeColorMatrix values=%220 0 0 0 0.35 0 0 0 0 0.2 0 0 0 0 0.1 0 0 0 1.6 -0.75%22/%3E%3C/filter%3E%3Cfilter id=%22k%22 x=%22-50%25%22 y=%22-50%25%22 width=%22200%25%22 height=%22200%25%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.015%22 numOctaves=%222%22 seed=%224%22/%3E%3CfeDisplacementMap in=%22SourceGraphic%22 scale=%2212%22/%3E%3C/filter%3E%3Crect width=%22900%22 height=%22900%22 fill=%22%23b0825b%22/%3E%3Crect width=%22900%22 height=%22900%22 filter=%22url(%23t)%22/%3E%3Crect x=%22-120%22 y=%22-120%22 width=%221140%22 height=%221140%22 filter=%22url(%23g)%22/%3E%3Crect width=%22900%22 height=%22900%22 filter=%22url(%23p)%22 opacity=%22.5%22/%3E%3Cg filter=%22url(%23k)%22%3E%3Cg transform=%22translate(270 610) rotate(8) scale(1.1)%22%3E%3Cellipse rx=%2295%22 ry=%22150%22 fill=%22%23c9996a%22 opacity=%22.12%22/%3E%3Cpath d=%22M0 -153 C 102.35 -68.85000000000001 93.45 76.5 0 153 C -84.55 84.15 -106.8 -61.2 0 -153 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%221.80%22 opacity=%220.33%22/%3E%3Cpath d=%22M0 -141 C 94.3 -63.45 86.10000000000001 70.5 0 141 C -77.89999999999999 77.55000000000001 -98.39999999999999 -56.400000000000006 0 -141 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%221.95%22 opacity=%220.38%22/%3E%3Cpath d=%22M0 -129 C 86.25 -58.050000000000004 78.75 64.5 0 129 C -71.25 70.95 -90.0 -51.6 0 -129 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.10%22 opacity=%220.42%22/%3E%3Cpath d=%22M0 -117 C 78.19999999999999 -52.65 71.4 58.5 0 117 C -64.6 64.35000000000001 -81.6 -46.800000000000004 0 -117 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.25%22 opacity=%220.47%22/%3E%3Cpath d=%22M0 -105 C 70.14999999999999 -47.25 64.05 52.5 0 105 C -57.949999999999996 57.75000000000001 -73.2 -42.0 0 -105 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.40%22 opacity=%220.51%22/%3E%3Cpath d=%22M0 -93 C 62.099999999999994 -41.85 56.7 46.5 0 93 C -51.3 51.150000000000006 -64.8 -37.2 0 -93 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.55%22 opacity=%220.55%22/%3E%3Cpath d=%22M0 -81 C 54.05 -36.45 49.35 40.5 0 81 C -44.65 44.550000000000004 -56.4 -32.4 0 -81 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.70%22 opacity=%220.60%22/%3E%3Cpath d=%22M0 -69 C 46.0 -31.05 42.0 34.5 0 69 C -38.0 37.95 -48.0 -27.6 0 -69 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.85%22 opacity=%220.65%22/%3E%3Cpath d=%22M0 -57 C 37.949999999999996 -25.650000000000002 34.65 28.5 0 57 C -31.349999999999998 31.35 -39.6 -22.8 0 -57 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%223.00%22 opacity=%220.69%22/%3E%3Cpath d=%22M0 -45 C 29.9 -20.25 27.3 22.5 0 45 C -24.7 24.750000000000004 -31.2 -18.0 0 -45 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%223.15%22 opacity=%220.73%22/%3E%3Cpath d=%22M0 -33 C 21.849999999999998 -14.85 19.95 16.5 0 33 C -18.05 18.150000000000002 -22.8 -13.200000000000001 0 -33 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%223.30%22 opacity=%220.78%22/%3E%3Cpath d=%22M0 -21 C 13.799999999999999 -9.450000000000001 12.600000000000001 10.5 0 21 C -11.399999999999999 11.55 -14.399999999999999 -8.4 0 -21 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%223.45%22 opacity=%220.82%22/%3E%3Cpath d=%22M-8 -14 C 6 -18 14 -4 9 8 C 4 18 -10 16 -13 4 C -15 -6 -14 -11 -8 -14Z%22 fill=%22%234a2810%22/%3E%3Ccircle cx=%22-2%22 cy=%22-1%22 r=%224%22 fill=%22%232e1808%22/%3E%3C/g%3E%3Cg transform=%22translate(700 200) rotate(-6) scale(0.6)%22%3E%3Cellipse rx=%2295%22 ry=%22150%22 fill=%22%23c9996a%22 opacity=%22.12%22/%3E%3Cpath d=%22M0 -153 C 102.35 -68.85000000000001 93.45 76.5 0 153 C -84.55 84.15 -106.8 -61.2 0 -153 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%221.80%22 opacity=%220.33%22/%3E%3Cpath d=%22M0 -141 C 94.3 -63.45 86.10000000000001 70.5 0 141 C -77.89999999999999 77.55000000000001 -98.39999999999999 -56.400000000000006 0 -141 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%221.95%22 opacity=%220.38%22/%3E%3Cpath d=%22M0 -129 C 86.25 -58.050000000000004 78.75 64.5 0 129 C -71.25 70.95 -90.0 -51.6 0 -129 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.10%22 opacity=%220.42%22/%3E%3Cpath d=%22M0 -117 C 78.19999999999999 -52.65 71.4 58.5 0 117 C -64.6 64.35000000000001 -81.6 -46.800000000000004 0 -117 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.25%22 opacity=%220.47%22/%3E%3Cpath d=%22M0 -105 C 70.14999999999999 -47.25 64.05 52.5 0 105 C -57.949999999999996 57.75000000000001 -73.2 -42.0 0 -105 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.40%22 opacity=%220.51%22/%3E%3Cpath d=%22M0 -93 C 62.099999999999994 -41.85 56.7 46.5 0 93 C -51.3 51.150000000000006 -64.8 -37.2 0 -93 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.55%22 opacity=%220.55%22/%3E%3Cpath d=%22M0 -81 C 54.05 -36.45 49.35 40.5 0 81 C -44.65 44.550000000000004 -56.4 -32.4 0 -81 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.70%22 opacity=%220.60%22/%3E%3Cpath d=%22M0 -69 C 46.0 -31.05 42.0 34.5 0 69 C -38.0 37.95 -48.0 -27.6 0 -69 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%222.85%22 opacity=%220.65%22/%3E%3Cpath d=%22M0 -57 C 37.949999999999996 -25.650000000000002 34.65 28.5 0 57 C -31.349999999999998 31.35 -39.6 -22.8 0 -57 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%223.00%22 opacity=%220.69%22/%3E%3Cpath d=%22M0 -45 C 29.9 -20.25 27.3 22.5 0 45 C -24.7 24.750000000000004 -31.2 -18.0 0 -45 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%223.15%22 opacity=%220.73%22/%3E%3Cpath d=%22M0 -33 C 21.849999999999998 -14.85 19.95 16.5 0 33 C -18.05 18.150000000000002 -22.8 -13.200000000000001 0 -33 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%223.30%22 opacity=%220.78%22/%3E%3Cpath d=%22M0 -21 C 13.799999999999999 -9.450000000000001 12.600000000000001 10.5 0 21 C -11.399999999999999 11.55 -14.399999999999999 -8.4 0 -21 Z%22 fill=%22none%22 stroke=%22%236a3f1e%22 stroke-width=%223.45%22 opacity=%220.82%22/%3E%3Cpath d=%22M-8 -14 C 6 -18 14 -4 9 8 C 4 18 -10 16 -13 4 C -15 -6 -14 -11 -8 -14Z%22 fill=%22%234a2810%22/%3E%3Ccircle cx=%22-2%22 cy=%22-1%22 r=%224%22 fill=%22%232e1808%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") center/cover no-repeat,#b0825b}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:#fff;color:var(--ink);font:17px/1.5 Archivo,system-ui,sans-serif;overflow-x:clip;min-height:100vh}
+body{margin:0;color:#fff;font:17px/1.5 Archivo,system-ui,sans-serif;overflow-x:clip;min-height:100vh;background:#b0825b}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--wood)}
 h1,h2,h3{margin:0;font-weight:400;line-height:1.05;text-wrap:balance}
 button,input,select{font:inherit}
-button{min-height:44px;border-radius:8px;border:2px solid var(--g);padding:8px 18px;font-weight:800;cursor:pointer;background:var(--g);color:#fff}
-button:hover{background:var(--gd);border-color:var(--gd)}
+button{min-height:44px;border-radius:8px;border:2px solid var(--bar);padding:8px 18px;font-weight:800;cursor:pointer;background:var(--bar);color:var(--barink)}
+button:hover{filter:brightness(1.07)}
 button:disabled{opacity:.45;cursor:not-allowed}
-button.ghost{background:#fff;color:var(--g)}button.ghost:hover{background:#eaf5ef}
-:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-input,select{min-height:44px;font-size:16px;border-radius:6px;border:2px solid #fff;padding:8px 12px;background:#fff;color:var(--ink)}
-input:focus{border-color:var(--g);outline:0}
+button.ghost{background:rgba(40,18,2,.45);color:#fff;border-color:rgba(255,255,255,.55)}button.ghost:hover{border-color:#fff;filter:none}
+.box button.ghost{background:#fff;color:var(--dk);border-color:var(--dk)}
+:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.box :focus-visible{outline-color:var(--dk)}
+input,select{min-height:44px;font-size:16px;border-radius:6px;border:2px solid #e8dcae;padding:8px 12px;background:#fff;color:var(--ink)}
+input:focus{border-color:var(--dk);outline:0}
 .hidden{display:none!important}
 .cheesy{font-family:"Luckiest Guy",Impact,sans-serif;text-transform:uppercase;letter-spacing:.03em;color:transparent;line-height:1.05;
- background:radial-gradient(circle at 20% 30%,var(--chz2) 0 4%,transparent 4.5%),radial-gradient(circle at 70% 65%,var(--chz2) 0 3%,transparent 3.5%),radial-gradient(circle at 45% 80%,var(--chz2) 0 2.5%,transparent 3%),linear-gradient(#ffe45c,var(--chz));
+ background:radial-gradient(ellipse at 20% 35%,#b85d00 0 5%,transparent 5.5%),radial-gradient(ellipse at 72% 62%,#b85d00 0 4%,transparent 4.5%),radial-gradient(circle at 45% 82%,#b85d00 0 3%,transparent 3.5%),linear-gradient(#ffc04d,var(--chd));
  background-size:90px 70px,70px 60px,55px 80px,100% 100%;-webkit-background-clip:text;background-clip:text;
- filter:drop-shadow(1px 1px 0 #e89400) drop-shadow(1px 1px 0 #e89400) drop-shadow(2px 2px 0 #d07f00) drop-shadow(0 3px 2px rgba(0,0,0,.18))}
-.bar{background:var(--g);color:#fff;font-family:"Archivo Black",Archivo,sans-serif;text-transform:uppercase;letter-spacing:.02em;text-align:center;padding:6px 10px;font-size:15px;line-height:1.2}
-.box{background:var(--y);box-shadow:0 3px 0 rgba(0,0,0,.08)}
+ filter:drop-shadow(1px 1px 0 #c76a00) drop-shadow(1px 1px 0 #c76a00) drop-shadow(2px 2px 0 #9a4f00) drop-shadow(0 4px 3px rgba(0,0,0,.35))}
+.bar{background:var(--bar);color:var(--barink);font-family:"Archivo Black",Archivo,sans-serif;text-transform:uppercase;letter-spacing:.02em;text-align:center;padding:6px 10px;font-size:15px;line-height:1.2}
+.box{background:var(--box);color:var(--ink);box-shadow:0 5px 0 rgba(0,0,0,.25);border-radius:10px;overflow:hidden}
 /* header */
-.top{position:relative;padding:14px max(3vw,14px) 10px;border-bottom:6px solid var(--g)}
+.top{position:relative;padding:12px max(3vw,14px) 10px;border-bottom:5px solid var(--bar);background:rgba(74,42,12,.88)}
 .titlerow{display:flex;align-items:center;justify-content:center;gap:clamp(8px,2vw,28px)}
-.titlerow h1{font-size:clamp(38px,6.2vw,92px);text-align:center}
-.titlerow svg{width:clamp(56px,8vw,120px);height:auto;flex:none}
-.status{text-align:center;color:var(--muted);font-weight:600;font-size:15px}
+.titlerow h1{flex:0 1 900px}
+.titlerow h1 svg{display:block;width:100%;height:auto}
+.titlerow>svg{width:clamp(56px,8vw,120px);height:auto;flex:none}
+.status{text-align:center;color:var(--muted);font-weight:600;font-size:15px;text-shadow:0 1px 2px rgba(0,0,0,.6)}
 .tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
 .tools button{min-height:40px;padding:6px 14px;font-size:15px}
 /* setup */
@@ -48,106 +52,108 @@ input:focus{border-color:var(--g);outline:0}
 .pad{padding:clamp(14px,2vw,22px)}
 form.add{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px}
 .plist{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:6px}
-.plist li{display:flex;align-items:center;gap:12px;background:#fff;border-radius:4px;padding:4px 4px 4px 12px}
-.plist li b{flex:1}.plist li span{flex:1;color:var(--muted)}
-.plist li button{background:#fff;color:#b3261e;border-color:#fff;padding:4px 10px;min-height:36px}
-.note{color:var(--muted);font-size:14px}
-.box .note{color:#4a4a20}
+.plist li{display:flex;align-items:center;gap:12px;background:#fff;border-radius:6px;padding:4px 4px 4px 12px}
+.plist li b{flex:0 1 auto}.plist li span{flex:1;color:#6b5d2a}
+.plist li .rm{background:#fff;color:#b3261e;border:2px solid #e8b4ae;border-radius:50%;width:44px;height:44px;min-height:44px;padding:0;font-size:28px;line-height:1;font-weight:800;flex:none;display:grid;place-items:center}
+.plist li .rm:hover{background:#b3261e;color:#fff;border-color:#b3261e;filter:none}
+.note{color:#fff;font-size:14px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.box .note{color:#5c5326;text-shadow:none}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .cheeses{display:flex;justify-content:center;align-items:flex-end;gap:10px;margin-bottom:18px}
 .cheeses svg{width:28%;max-width:150px;height:auto}
 .rules ul{margin:0;padding-left:20px}.rules li{margin:4px 0}
-/* bracket */
+/* draw */
 .boardwrap{padding:clamp(14px,2vw,28px) max(2vw,10px)}
-.bracket{display:flex;gap:clamp(10px,1.4vw,22px);overflow-x:auto;padding-bottom:10px;align-items:stretch;min-height:520px}
+.bracket{display:flex;gap:clamp(10px,1.4vw,22px);overflow-x:auto;padding:4px 4px 10px;align-items:stretch;min-height:520px}
 .col{flex:1 1 0;min-width:180px;display:flex;flex-direction:column;justify-content:space-around;gap:14px}
 .col.fin{flex:1.5 1 0;min-width:260px;justify-content:center;align-items:stretch}
-.m{border:0;padding:0;text-align:left;width:100%;background:var(--y);color:var(--ink);border-radius:0;font-weight:400;min-height:0;display:block;box-shadow:0 3px 0 rgba(0,0,0,.08)}
-.m:hover{background:var(--y);border:0}
+.m{border:0;padding:0;text-align:left;width:100%;background:var(--box);color:var(--ink);border-radius:10px;overflow:hidden;font-weight:400;min-height:0;display:block;box-shadow:0 5px 0 rgba(0,0,0,.25)}
+.m:hover{filter:none}
 .m .bar{font-size:13px}
 .m .body{padding:8px 10px 10px}
-.slot{display:flex;align-items:center;gap:6px}
-.slot i{font-style:normal;font-family:"Archivo Black",sans-serif;font-size:11px;width:50px;flex:none;line-height:1.1;white-space:nowrap}
-.slot .s{flex:1;background:#fff;min-height:40px;padding:4px 8px;line-height:1.15;font-size:15px;display:flex;flex-direction:column;justify-content:center;border:2px solid #fff}
-.slot .s small{color:var(--muted);font-size:13px}
-.slot .s.win{border-color:var(--g);font-weight:800}
-.slot .s.win::after{content:"✓ through";font-size:12px;color:var(--g);font-weight:800}
+.slot{display:flex;flex-direction:column;align-items:stretch;gap:2px}
+.slot i{font-style:normal;font-family:"Archivo Black",sans-serif;font-size:11px;line-height:1.1;white-space:nowrap;color:#5c5326;padding-left:2px}
+.slot .s{flex:1;background:#fff;min-height:44px;padding:5px 10px 5px 6px;line-height:1.15;font-size:15px;display:flex;flex-direction:column;justify-content:center;border:2px solid #fff;border-radius:4px}
+.slot .s small{color:#6b5d2a;font-size:13px}
+.slot .s.win{border-color:var(--win);font-weight:800}
+.slot .s.win::after{content:"✓ through";font-size:12px;color:var(--win);font-weight:800}
 .slot .s.lose{opacity:.45;text-decoration:line-through}
 .slot .s.empty{color:#a3a38a}
 .vv{text-align:center;font-size:12px;font-weight:800;line-height:1;padding:3px 0}
-.m .tag{margin-top:8px;font-size:13px;font-weight:700;color:#4a4a20}
-.m.ready{cursor:pointer;outline:4px solid var(--g);outline-offset:3px}
-.m.ready .tag{background:var(--g);color:#fff;padding:4px 8px;display:inline-block;border-radius:4px}
-.m.ready:hover{filter:brightness(.97)}
+.m .tag{margin-top:8px;font-size:13px;font-weight:700;color:#5c5326}
+.m.ready{cursor:pointer;outline:4px solid var(--dk);outline-offset:3px}
+.m.ready .tag{background:var(--dk);color:var(--bar);padding:4px 8px;display:inline-block;border-radius:4px}
+.m.ready:hover{filter:brightness(1.03)}
 .fin .m .bar{font-size:clamp(15px,1.4vw,22px);padding:10px}
-.fin .slot .s{min-height:58px;font-size:18px}
-.fin .slot i{font-size:15px;width:46px}
+.fin .slot .s{min-height:58px}
+.fin .slot i{font-size:13px}
 .fin .swiss{width:60%;max-width:200px;margin:16px auto 0;display:block}
 .rota{margin-top:22px}
 .rota .bar{text-align:left}
 .chips{display:flex;flex-wrap:wrap;gap:6px;padding:12px}
 .chip{background:#fff;padding:4px 10px;border-radius:4px;font-size:15px;white-space:nowrap}
-.chip b{color:var(--g)}.chip.out{color:var(--muted)}
+.chip b{color:var(--win)}.chip.out{color:#7a7458}
 /* stage */
-.stage{position:fixed;inset:0;z-index:10;overflow:auto;background:#fff}
+.stage{position:fixed;inset:0;z-index:10;overflow:auto;background:transparent;isolation:isolate}
+.stage::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--wood)}
 .stage>.bar{font-size:clamp(22px,2.6vw,36px);padding:14px;position:sticky;top:0;z-index:1}
 .stage .inner{max-width:1360px;margin:auto;padding:clamp(14px,2.4vw,32px)}
-.stage .lead{text-align:center;color:var(--muted);margin:0 0 16px;font-weight:600}
+.stage .lead{text-align:center;color:#fff;margin:0 0 16px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 .vs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:clamp(10px,2.4vw,36px);align-items:center;margin-bottom:22px}
 .side-c .bar{font-size:clamp(16px,1.6vw,22px);padding:10px}
 .side-c .pad{display:grid;gap:10px;justify-items:center}
-.side-c .slotbig{background:#fff;width:100%;text-align:center;padding:clamp(12px,2vw,24px) 10px;font-family:"Archivo Black",sans-serif;font-size:clamp(26px,3.6vw,52px);line-height:1.05;overflow-wrap:anywhere}
-.side-c .count{font-family:"Archivo Black",sans-serif;font-size:clamp(40px,5vw,72px);color:var(--g);line-height:1}
-.side-c .count small{display:block;font-family:Archivo;font-size:14px;color:#4a4a20;font-weight:600}
+.side-c .slotbig{background:#fff;width:100%;text-align:center;padding:clamp(12px,2vw,24px) 10px;font-family:"Archivo Black",sans-serif;font-size:clamp(26px,3.6vw,52px);line-height:1.05;overflow-wrap:anywhere;border-radius:6px}
+.side-c .count{font-family:"Archivo Black",sans-serif;font-size:clamp(40px,5vw,72px);color:var(--dk);line-height:1}
+.side-c .count small{display:block;font-family:Archivo;font-size:14px;color:#5c5326;font-weight:600}
 .vsw{font-size:clamp(44px,6vw,90px)}
 .judges{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:14px}
 .voters{grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr))}
 .j .bar{display:flex;justify-content:space-between;gap:8px;text-align:left;font-size:15px}
-.j .bar small{font-family:Archivo;text-transform:none;font-weight:600;opacity:.9;white-space:nowrap}
+.j .bar small{font-family:Archivo;text-transform:none;font-weight:600;white-space:nowrap}
 .j .pad{padding:10px}
 .j .btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.j .btns button{background:#fff;color:var(--ink);border-color:#fff;font-size:15px;line-height:1.2;overflow-wrap:anywhere}
-.j .btns button:hover{border-color:var(--g)}
-.j .btns button.on{background:var(--g);color:#fff;border-color:var(--g)}
+.j .btns button{background:#fff;color:var(--ink);border-color:#e8dcae;font-size:15px;line-height:1.2;padding:8px 6px;overflow-wrap:break-word;hyphens:auto}
+.j .btns button:hover{border-color:var(--dk)}
+.j .btns button.on{background:var(--dk);color:var(--bar);border-color:var(--dk)}
 .j select{width:100%;margin-top:8px;font-size:15px}
 .foot{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px}
 .banner{margin:18px auto 0;max-width:820px;text-align:center;font-family:"Archivo Black",sans-serif;font-size:20px;padding:14px}
 /* champion */
 .champ{text-align:center;max-width:960px;margin:auto;padding:clamp(18px,3vw,40px) 14px}
-.champ .cup{width:min(260px,50vw);height:auto;animation:lift 1.4s ease-out both}
-.champ .label{font-family:"Archivo Black",sans-serif;color:var(--g);text-transform:uppercase;font-size:clamp(18px,2vw,26px)}
+.champ .cup{width:min(380px,72vw);max-height:50vh;height:auto;animation:lift 1.4s ease-out both;filter:drop-shadow(0 16px 20px rgba(0,0,0,.4))}
+.champ .label{font-family:"Archivo Black",sans-serif;color:var(--bar);text-shadow:0 2px 3px rgba(0,0,0,.7);text-transform:uppercase;font-size:clamp(18px,2vw,26px)}
 .champ h2{font-size:clamp(52px,9vw,128px);margin:6px 0;overflow-wrap:anywhere}
-.champ .by{font-size:clamp(20px,2.4vw,30px);font-weight:600}
+.champ .by{font-size:clamp(20px,2.4vw,30px);font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 @keyframes lift{from{transform:translateY(40px) scale(.85);opacity:0}to{transform:none;opacity:1}}
+#fw{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:19;display:none}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:20;overflow:hidden}
 .confetti i{position:absolute;top:-24px;width:14px;height:12px;border-radius:2px;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
-@media (prefers-reduced-motion:reduce){.champ .cup{animation:none}.confetti{display:none}}
-.dlg{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.5);display:grid;place-items:center;padding:16px}
+@media (prefers-reduced-motion:reduce){.champ .cup{animation:none}.confetti,#fw{display:none!important}}
+.dlg{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px}
 .dlg>div{max-width:440px;width:100%}
 .dlg p{margin:0 0 14px}
-@media(max-width:900px){.setup{grid-template-columns:minmax(0,1fr)}.titlerow svg{display:none}}
+@media(max-width:900px){.setup{grid-template-columns:minmax(0,1fr)}.titlerow>svg{display:none}}
 /* phone: draw stacks round by round */
 .rounds{display:grid;gap:14px}
-.rounds details{background:#fff}
-.rounds summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:48px;text-align:left;font-size:17px}
+.rounds details{background:transparent}
+.rounds summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:48px;text-align:left;font-size:17px;border-radius:8px}
 .rounds summary::-webkit-details-marker{display:none}
 .rounds summary small{font-family:Archivo;text-transform:none;font-weight:600;white-space:nowrap}
 .rounds summary::after{content:"▾";font-size:14px}.rounds details:not([open]) summary::after{content:"▸"}
-.rounds .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:12px;padding:12px 0 4px}
+.rounds .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:14px;padding:12px 4px 4px}
 .rounds .m.ready{outline-offset:2px}
 @media(max-width:600px){
  body{font-size:16px}
  form.add{grid-template-columns:minmax(0,1fr)}
- .top{padding:10px 12px 8px;border-bottom-width:5px}
- .titlerow h1{font-size:clamp(28px,9.4vw,44px)}
+ .top{padding:10px 12px 8px;border-bottom-width:4px}
  .status{font-size:14px}
  .tools button{flex:1 1 auto}
  .wrap,.boardwrap{padding:14px 12px}
  .pad{padding:14px}
  .cheeses{margin-bottom:10px}
- .plist li{flex-wrap:wrap;gap:2px 10px}
- .plist li span{flex:1 1 40%}
+ .plist li{gap:8px}
+ .plist li span{flex:1 1 auto}
  .rota{margin-top:16px}.rota .bar{font-size:13px}
  .chips{padding:10px;gap:5px}.chip{font-size:14px}
  .stage>.bar{font-size:20px;padding:12px}
@@ -162,12 +168,47 @@ form.add{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap
  .judges,.voters{grid-template-columns:minmax(0,1fr);gap:10px}
  .j .bar{font-size:13px}
  .voters .j .pad{padding:8px}
- .foot{position:sticky;bottom:0;background:#fff;margin:14px -12px 0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -4px 12px rgba(0,0,0,.08);gap:8px}
+ .foot{position:sticky;bottom:0;background:#5a3417;margin:14px -12px 0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -4px 12px rgba(0,0,0,.3);gap:8px}
  .foot button{flex:1 1 40%;padding:8px 10px}
  .foot #confirm{flex-basis:100%}
  .banner{font-size:17px}
  .champ h2{font-size:clamp(40px,13vw,64px)}
 }
+
+/* cheese icons + gallery */
+.ico{width:34px;height:28px;flex:none}
+.slot .s{flex-direction:row;align-items:center;justify-content:flex-start;gap:8px}
+.slot .s{container-type:inline-size}
+.slot .s .tx{flex:1;display:block;min-width:0;overflow-wrap:break-word;font-size:clamp(14px,8cqi,21px);line-height:1.2;letter-spacing:.01em}
+.slot .s .tx .ch{font-weight:800}
+.slot .s .tx .dash{color:#8a7a45;margin:0 .3em}
+.slot .s .tx small{font-size:1em;color:#5c4a1c;font-weight:600}
+.slot .s.win::after{content:none}
+.slot .s.win .tx::after{content:"✓ through";display:block;font-size:12px;color:var(--win);font-weight:800;letter-spacing:0}
+.slot .s.lose .ico{filter:grayscale(1)}
+.fin .slot .ico{width:48px;height:40px}
+.plist .icbtn{background:#fff;border:2px solid #e8dcae;border-radius:8px;padding:2px 4px;min-height:44px;display:flex;align-items:center}
+.plist .icbtn .ico{width:46px;height:38px}
+.plist .icbtn:hover{border-color:var(--dk);filter:none}
+.side-c .bigico{width:clamp(80px,9vw,130px);height:auto}
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:clamp(8px,2vw,24px)}
+.champ .champico{width:min(180px,34vw);height:auto;display:block}
+.gal .lead b{color:var(--bar)}
+.galgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,170px),1fr));gap:14px}
+.gcard{background:var(--box);color:var(--ink);border:3px solid transparent;border-radius:10px;padding:10px;text-align:center;font-weight:400;min-height:0;box-shadow:0 5px 0 rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;gap:2px;cursor:default}
+.gcard:hover{filter:none}
+.pick .gcard{cursor:pointer}.pick .gcard:hover{border-color:var(--dk)}
+.gcard.on{border-color:var(--win)}
+.gcard .ico{width:110px;height:92px}
+.gcard b{font-family:"Archivo Black",sans-serif;font-size:15px;line-height:1.2}
+.gcard small{color:#6b5d2a;font-size:13px;line-height:1.3}
+.galplayers{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:10px;margin:0 0 22px}
+.gp{display:flex;align-items:center;gap:10px;background:var(--box);color:var(--ink);border-radius:10px;padding:6px 8px;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.gp .ico{width:52px;height:44px}
+.gp .t{flex:1;line-height:1.2}.gp .t small{display:block;color:#6b5d2a;font-size:13px}
+.gp button{min-height:40px;padding:4px 12px;font-size:14px;background:#fff;color:var(--dk);border-color:var(--dk)}
+.gal h3{font-family:"Archivo Black",sans-serif;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8);font-size:20px;margin:0 0 10px}
+@media(max-width:600px){.gcard .ico{width:84px;height:70px}.galgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ico{width:30px;height:25px}}
 </style>
 </head>
 <body>
@@ -238,7 +279,14 @@ form.add{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap
 <header class="top">
  <div class="titlerow">
   <svg viewBox="0 0 200 150" aria-hidden="true"><use href="#hard"/></svg>
-  <h1 class="cheesy">Cheese World Cup</h1>
+  <h1><svg viewBox="0 0 1000 160" role="img" aria-labelledby="ttl"><title id="ttl">Cheese World Cup</title>
+   <defs>
+    <linearGradient id="ched" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf5c"/><stop offset=".5" stop-color="#fbab22"/><stop offset="1" stop-color="#f09410"/></linearGradient>
+    <clipPath id="tclip"><text x="500" y="132" font-family="'Archivo Black',Impact,sans-serif" font-size="128" font-weight="900" text-anchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs">CHEESE WORLD CUP</text></clipPath>
+   </defs>
+   <g><text x="509" y="141" font-family="'Archivo Black',Impact,sans-serif" font-size="128" font-weight="900" text-anchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs" fill="rgba(0,0,0,.35)">CHEESE WORLD CUP</text><text x="507" y="139" font-family="'Archivo Black',Impact,sans-serif" font-size="128" font-weight="900" text-anchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs" fill="#8f4700">CHEESE WORLD CUP</text><text x="506" y="138" font-family="'Archivo Black',Impact,sans-serif" font-size="128" font-weight="900" text-anchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs" fill="#a35200">CHEESE WORLD CUP</text><text x="504.5" y="136.5" font-family="'Archivo Black',Impact,sans-serif" font-size="128" font-weight="900" text-anchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs" fill="#b85e00">CHEESE WORLD CUP</text><text x="503" y="135" font-family="'Archivo Black',Impact,sans-serif" font-size="128" font-weight="900" text-anchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs" fill="#c96a00">CHEESE WORLD CUP</text><text x="501.5" y="133.5" font-family="'Archivo Black',Impact,sans-serif" font-size="128" font-weight="900" text-anchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs" fill="#d97700">CHEESE WORLD CUP</text><text x="500" y="132" font-family="'Archivo Black',Impact,sans-serif" font-size="128" font-weight="900" text-anchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs" fill="url(#ched)">CHEESE WORLD CUP</text></g>
+   <g clip-path="url(#tclip)"><ellipse cx="454" cy="85" rx="16.2" ry="14.0" fill="#b35a00"/><ellipse cx="457" cy="88" rx="12.6" ry="9.8" fill="#d97c08"/><ellipse cx="508" cy="88" rx="8.0" ry="7.1" fill="#b35a00"/><ellipse cx="509" cy="89" rx="6.3" ry="4.9" fill="#d97c08"/><ellipse cx="626" cy="108" rx="7.0" ry="5.8" fill="#b35a00"/><ellipse cx="627" cy="109" rx="5.5" ry="4.1" fill="#d97c08"/><ellipse cx="103" cy="109" rx="13.6" ry="10.4" fill="#b35a00"/><ellipse cx="105" cy="112" rx="10.6" ry="7.3" fill="#d97c08"/><ellipse cx="968" cy="125" rx="13.2" ry="11.9" fill="#b35a00"/><ellipse cx="970" cy="127" rx="10.3" ry="8.3" fill="#d97c08"/><ellipse cx="168" cy="31" rx="11.8" ry="9.0" fill="#b35a00"/><ellipse cx="170" cy="33" rx="9.2" ry="6.3" fill="#d97c08"/><ellipse cx="200" cy="54" rx="6.3" ry="5.5" fill="#b35a00"/><ellipse cx="201" cy="55" rx="4.9" ry="3.8" fill="#d97c08"/><ellipse cx="442" cy="113" rx="11.7" ry="10.7" fill="#b35a00"/><ellipse cx="444" cy="115" rx="9.1" ry="7.5" fill="#d97c08"/><ellipse cx="500" cy="95" rx="11.0" ry="9.0" fill="#b35a00"/><ellipse cx="502" cy="97" rx="8.6" ry="6.3" fill="#d97c08"/><ellipse cx="983" cy="128" rx="15.2" ry="14.1" fill="#b35a00"/><ellipse cx="985" cy="131" rx="11.9" ry="9.9" fill="#d97c08"/><ellipse cx="321" cy="53" rx="9.2" ry="7.0" fill="#b35a00"/><ellipse cx="322" cy="54" rx="7.2" ry="4.9" fill="#d97c08"/><ellipse cx="758" cy="69" rx="15.3" ry="13.0" fill="#b35a00"/><ellipse cx="761" cy="72" rx="11.9" ry="9.1" fill="#d97c08"/><ellipse cx="944" cy="113" rx="6.0" ry="4.8" fill="#b35a00"/><ellipse cx="945" cy="114" rx="4.7" ry="3.4" fill="#d97c08"/><ellipse cx="898" cy="76" rx="16.8" ry="14.3" fill="#b35a00"/><ellipse cx="901" cy="79" rx="13.1" ry="10.0" fill="#d97c08"/><ellipse cx="86" cy="92" rx="14.6" ry="11.9" fill="#b35a00"/><ellipse cx="88" cy="94" rx="11.4" ry="8.3" fill="#d97c08"/><ellipse cx="100" cy="63" rx="16.6" ry="15.6" fill="#b35a00"/><ellipse cx="103" cy="66" rx="13.0" ry="10.9" fill="#d97c08"/><ellipse cx="129" cy="54" rx="7.1" ry="5.4" fill="#b35a00"/><ellipse cx="131" cy="55" rx="5.5" ry="3.8" fill="#d97c08"/><ellipse cx="788" cy="47" rx="12.2" ry="10.5" fill="#b35a00"/><ellipse cx="790" cy="50" rx="9.5" ry="7.3" fill="#d97c08"/><ellipse cx="200" cy="102" rx="7.4" ry="6.8" fill="#b35a00"/><ellipse cx="201" cy="103" rx="5.8" ry="4.7" fill="#d97c08"/><ellipse cx="128" cy="71" rx="8.3" ry="6.8" fill="#b35a00"/><ellipse cx="130" cy="73" rx="6.5" ry="4.8" fill="#d97c08"/><ellipse cx="957" cy="109" rx="9.3" ry="9.1" fill="#b35a00"/><ellipse cx="958" cy="111" rx="7.3" ry="6.4" fill="#d97c08"/><ellipse cx="219" cy="69" rx="15.4" ry="14.0" fill="#b35a00"/><ellipse cx="222" cy="72" rx="12.0" ry="9.8" fill="#d97c08"/><ellipse cx="112" cy="127" rx="8.3" ry="6.8" fill="#b35a00"/><ellipse cx="114" cy="128" rx="6.5" ry="4.8" fill="#d97c08"/><ellipse cx="765" cy="62" rx="9.3" ry="7.1" fill="#b35a00"/><ellipse cx="766" cy="64" rx="7.2" ry="5.0" fill="#d97c08"/><ellipse cx="102" cy="87" rx="8.7" ry="7.8" fill="#b35a00"/><ellipse cx="104" cy="89" rx="6.8" ry="5.5" fill="#d97c08"/><ellipse cx="376" cy="74" rx="16.6" ry="14.4" fill="#b35a00"/><ellipse cx="379" cy="78" rx="12.9" ry="10.1" fill="#d97c08"/><ellipse cx="572" cy="115" rx="8.0" ry="6.3" fill="#b35a00"/><ellipse cx="574" cy="116" rx="6.2" ry="4.4" fill="#d97c08"/><ellipse cx="896" cy="110" rx="8.7" ry="7.0" fill="#b35a00"/><ellipse cx="898" cy="112" rx="6.8" ry="4.9" fill="#d97c08"/><ellipse cx="732" cy="122" rx="8.2" ry="8.1" fill="#b35a00"/><ellipse cx="734" cy="124" rx="6.4" ry="5.6" fill="#d97c08"/><ellipse cx="871" cy="89" rx="10.6" ry="8.3" fill="#b35a00"/><ellipse cx="873" cy="91" rx="8.3" ry="5.8" fill="#d97c08"/><ellipse cx="53" cy="124" rx="8.6" ry="8.0" fill="#b35a00"/><ellipse cx="54" cy="126" rx="6.7" ry="5.6" fill="#d97c08"/><ellipse cx="264" cy="111" rx="12.6" ry="10.3" fill="#b35a00"/><ellipse cx="267" cy="113" rx="9.8" ry="7.2" fill="#d97c08"/><ellipse cx="185" cy="101" rx="6.8" ry="5.5" fill="#b35a00"/><ellipse cx="186" cy="102" rx="5.3" ry="3.8" fill="#d97c08"/><ellipse cx="558" cy="114" rx="12.8" ry="10.5" fill="#b35a00"/><ellipse cx="560" cy="116" rx="10.0" ry="7.3" fill="#d97c08"/><ellipse cx="905" cy="50" rx="6.2" ry="5.1" fill="#b35a00"/><ellipse cx="906" cy="51" rx="4.8" ry="3.5" fill="#d97c08"/><ellipse cx="447" cy="36" rx="7.9" ry="6.7" fill="#b35a00"/><ellipse cx="449" cy="37" rx="6.2" ry="4.7" fill="#d97c08"/><ellipse cx="570" cy="43" rx="10.0" ry="9.7" fill="#b35a00"/><ellipse cx="572" cy="45" rx="7.8" ry="6.8" fill="#d97c08"/><ellipse cx="966" cy="94" rx="13.6" ry="12.2" fill="#b35a00"/><ellipse cx="969" cy="97" rx="10.6" ry="8.5" fill="#d97c08"/><ellipse cx="151" cy="33" rx="6.2" ry="6.1" fill="#b35a00"/><ellipse cx="152" cy="35" rx="4.8" ry="4.2" fill="#d97c08"/><ellipse cx="695" cy="124" rx="6.2" ry="5.7" fill="#b35a00"/><ellipse cx="696" cy="126" rx="4.9" ry="4.0" fill="#d97c08"/><ellipse cx="483" cy="102" rx="9.5" ry="9.5" fill="#b35a00"/><ellipse cx="484" cy="104" rx="7.4" ry="6.7" fill="#d97c08"/><ellipse cx="88" cy="84" rx="14.1" ry="13.8" fill="#b35a00"/><ellipse cx="91" cy="87" rx="11.0" ry="9.6" fill="#d97c08"/><ellipse cx="730" cy="99" rx="14.7" ry="14.4" fill="#b35a00"/><ellipse cx="733" cy="102" rx="11.5" ry="10.1" fill="#d97c08"/><ellipse cx="356" cy="97" rx="15.9" ry="15.4" fill="#b35a00"/><ellipse cx="359" cy="101" rx="12.4" ry="10.8" fill="#d97c08"/><ellipse cx="420" cy="107" rx="15.5" ry="13.8" fill="#b35a00"/><ellipse cx="422" cy="111" rx="12.1" ry="9.7" fill="#d97c08"/><ellipse cx="621" cy="67" rx="12.4" ry="11.2" fill="#b35a00"/><ellipse cx="623" cy="70" rx="9.7" ry="7.8" fill="#d97c08"/><rect x="0" y="20" width="1000" height="10" fill="#fff" opacity=".18"/></g>
+  </svg></h1>
   <svg viewBox="0 0 200 150" aria-hidden="true"><use href="#gouda"/></svg>
  </div>
  <div class="status" id="status"></div>
@@ -261,6 +309,7 @@ form.add{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap
      <p class="note" id="countNote"></p>
      <div class="row">
       <button id="startBtn">Make the draw</button>
+      <button class="ghost" id="howBtn" type="button">How it works</button>
       <button class="ghost" id="sampleBtn">Add sample players</button>
       <button class="ghost" id="clearBtn">Clear list</button>
      </div>
@@ -272,7 +321,7 @@ form.add{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap
      <svg viewBox="0 0 200 150" style="max-width:190px;width:36%"><use href="#swiss"/></svg>
      <svg viewBox="0 0 200 150"><use href="#brie"/></svg>
     </div>
-    <div class="box rules">
+    <div class="box rules" id="howItWorks" tabindex="-1">
      <h2 class="bar">How it works</h2>
      <div class="pad"><ul>
       <li>Two cheeses go head to head in every game.</li>
@@ -292,17 +341,32 @@ form.add{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap
 
  <section class="hidden" id="vChamp">
   <div class="champ">
-   <svg class="cup" viewBox="0 -24 240 294" aria-hidden="true"><use href="#cup"/></svg>
+   
    <div class="label">Cheese World Cup champion</div>
+   <div class="podium"><svg class="cup bigcup" viewBox="0 -24 240 310" role="img" aria-labelledby="cupT"><title id="cupT">Trophy</title>
+    <path d="M60 30h120v20c0 60-30 95-60 100-30-5-60-40-60-100z" fill="url(#gold)"/>
+    <path d="M60 46c-34 0-40 44-6 60M180 46c34 0 40 44 6 60" fill="none" stroke="url(#gold)" stroke-width="10"/>
+    <path d="M108 148h24l6 52h-36z" fill="url(#gold)"/>
+    <rect x="70" y="198" width="100" height="18" rx="4" fill="url(#gold)"/>
+    <path d="M38 216 H202 L192 284 H48 Z" fill="#339966"/>
+    <path d="M38 216 H202 L200 226 H40 Z" fill="#25744c"/>
+    <rect x="52" y="234" width="136" height="40" rx="4" fill="url(#gold)"/>
+    <text id="champName" x="120" y="263" text-anchor="middle" font-family="'Archivo Black',Impact,sans-serif" font-size="24" fill="#3a2a06"></text>
+    <path d="M70 34 L170 34 L150 -10 Z" fill="url(#yel)"/>
+    <path d="M70 34 L170 34 L170 48 L70 48 Z" fill="#f0a000"/>
+    <circle cx="122" cy="14" r="6" fill="#e09a00"/><circle cx="140" cy="24" r="4" fill="#e09a00"/><circle cx="104" cy="26" r="4" fill="#e09a00"/>
+    <path d="M84 60c4 30 14 52 30 64" stroke="#fff6c2" stroke-width="5" fill="none" opacity=".55" stroke-linecap="round"/>
+   </svg></div>
    <h2 class="cheesy" id="champCheese"></h2>
-   <div class="by" id="champBy"></div>
    <p class="note" id="champScore"></p>
-   <div class="foot"><button id="seeBracket">See the full draw</button><button class="ghost" id="newBtn2">New tournament</button></div>
+   <div class="foot"><button id="celebrateBtn">Celebrate again</button><button class="ghost" id="seeBracket">See the full draw</button><button class="ghost" id="newBtn2">New tournament</button></div>
   </div>
  </section>
 </main>
 
 <div class="stage hidden" id="stage"></div>
+<div class="stage gal hidden" id="gal"></div>
+<canvas id="fw" aria-hidden="true"></canvas>
 <div class="confetti" id="confetti"></div>
 <div class="dlg hidden" id="dlg"><div class="box"><h2 class="bar">Are you sure?</h2><div class="pad"><p id="dlgText"></p><div class="row"><button id="dlgYes">Yes</button><button class="ghost" id="dlgNo">Cancel</button></div></div></div></div>
 
@@ -312,6 +376,43 @@ const KEY='cheese-world-cup-v1';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+/* ---------- cheese clip-art gallery ---------- */
+const SH='<ellipse cx="60" cy="91" rx="46" ry="5" fill="#000" opacity=".2"/>';
+const blk=(t,f,r)=>`${SH}<path d="M12 42 L70 27 L108 39 L50 55Z" fill="${t}"/><path d="M12 42 L50 55 L50 87 L12 74Z" fill="${f}"/><path d="M50 55 L108 39 L108 71 L50 87Z" fill="${r}"/>`;
+const ICONS=[
+ {k:'swiss',n:'Swiss (holes)',kw:['emmental','emmentaler','jarlsberg','maasdam','leerdammer','swiss','holey'],s:`<use href="#swiss" width="120" height="90" y="6"/>`},
+ {k:'cheddar',n:'Cheddar block',kw:['cheddar','colby','monterey','jack','cathedral city','davidstow','orkney','vintage','mature','mild','wookey','barber','keen\'s','westcombe','pilgrims','pilgrim','seriously strong','black bomber','snowdonia'],s:blk('#ffd66e','#f5b52e','#e39d14')+'<g fill="#e8a21c"><circle cx="40" cy="42" r="2"/><circle cx="66" cy="36" r="1.6"/><circle cx="80" cy="44" r="1.8"/></g>'},
+ {k:'orange',n:'Red Leicester',kw:['red leicester','leicester','double gloucester','gloucester','mimolette','red cheddar','annatto'],s:blk('#ffac55','#f07d16','#d0660a')+'<g fill="#e0730f"><circle cx="44" cy="42" r="2"/><circle cx="72" cy="37" r="1.6"/></g>'},
+ {k:'smoked',n:'Smoked',kw:['smoked','applewood','smokey','smoky','oak smoked'],s:blk('#f3d088','#9c5a24','#7b4419')+'<path d="M12 42 L70 27 L108 39 L50 55Z" fill="none" stroke="#8a4f1f" stroke-width="3"/>'},
+ {k:'gouda',n:'Gouda wheel',kw:['gouda','old amsterdam','beemster','boerenkaas','maasland','gouda wheel'],s:`<use href="#gouda" width="120" height="90" y="6"/>`},
+ {k:'edam',n:'Edam ball',kw:['edam','babybel','red wax'],s:`${SH}<circle cx="58" cy="54" r="34" fill="#d62a2a"/><path d="M58 54 L92 54 A34 34 0 0 0 80 28Z" fill="#ffd458"/><path d="M58 54 L80 28 L84 33 L62 58Z" fill="#f2b92c"/><path d="M34 34 Q44 26 56 25" stroke="#ff8080" stroke-width="5" fill="none" stroke-linecap="round"/>`},
+ {k:'blue',n:'Blue cheese',kw:['stilton','roquefort','gorgonzola','danish blue','dolcelatte','cambozola','shropshire blue','blue','bleu','cashel','saint agur','st agur','dorset blue','yorkshire blue','blue vinny'],s:`<use href="#blue" width="120" height="90" y="6"/>`},
+ {k:'brie',n:'Brie wedge',kw:['brie','taleggio','reblochon','vacherin','brillat','chaource'],s:`<use href="#brie" width="120" height="90" y="6"/>`},
+ {k:'camembert',n:'Camembert',kw:['camembert','tunworth','baron bigod','coulommiers','mont d\'or'],s:`${SH}<ellipse cx="60" cy="66" rx="46" ry="16" fill="#c99a5b"/><rect x="14" y="52" width="92" height="14" fill="#c99a5b"/><rect x="18" y="44" width="84" height="16" fill="#f1ead4"/><ellipse cx="60" cy="60" rx="42" ry="13" fill="#e9e0c4"/><ellipse cx="60" cy="44" rx="42" ry="14" fill="#fffdf3"/><g fill="#efe9d6"><circle cx="40" cy="42" r="3"/><circle cx="62" cy="38" r="2.5"/><circle cx="78" cy="47" r="3"/><circle cx="52" cy="50" r="2"/></g><path d="M60 44 L98 40 Q100 46 96 50Z" fill="#f7e2a2"/>`},
+ {k:'hard',n:'Hard aged (Parmesan)',kw:['parmesan','parmigiano','reggiano','grana','padano','pecorino','comte','comté','gruyere','gruyère','beaufort','asiago','aged','provolone','montgomery','abondance','appenzeller'],s:`<use href="#hard" width="120" height="90" y="6"/>`},
+ {k:'manchego',n:'Manchego',kw:['manchego','zamorano','idiazabal','sheep'],s:`${SH}<path d="M10 76 L96 26 Q110 30 108 46 L108 80 L24 88Z" fill="#5a4a36"/><path d="M10 76 L96 26 Q110 30 108 46 L22 82Z" fill="#f4e5b8"/><path d="M22 82 L108 46 L108 80 L24 88Z" fill="#6b5840"/><path d="M26 86 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6" stroke="#a89474" stroke-width="2" fill="none" transform="rotate(-21 66 70)"/><g fill="#e6d29c"><circle cx="58" cy="58" r="1.6"/><circle cx="76" cy="48" r="1.4"/><circle cx="44" cy="68" r="1.5"/></g>`},
+ {k:'mozzarella',n:'Mozzarella',kw:['mozzarella','burrata','bocconcini','buffalo','fior di latte','stracciatella'],s:`${SH}<circle cx="44" cy="58" r="26" fill="#fbfbf6"/><path d="M24 66 A26 26 0 0 0 66 70" stroke="#e3e3d8" stroke-width="6" fill="none"/><circle cx="80" cy="64" r="20" fill="#f8f8f1"/><path d="M64 72 A20 20 0 0 0 96 72" stroke="#e1e1d5" stroke-width="5" fill="none"/><circle cx="36" cy="48" r="6" fill="#fff"/><path d="M58 30 Q74 18 86 28 Q74 40 58 30Z" fill="#3e9b48"/><path d="M58 30 L84 28" stroke="#2c7a35" stroke-width="1.5"/>`},
+ {k:'halloumi',n:'Halloumi',kw:['halloumi','hellim','grilling','squeaky','juustoleipa','paneer grill'],s:`${SH}<rect x="14" y="44" width="58" height="34" rx="8" fill="#f5ead0" transform="rotate(-8 43 61)"/><rect x="48" y="38" width="58" height="34" rx="8" fill="#fbf1d8" transform="rotate(6 77 55)"/><g stroke="#9b5a1e" stroke-width="5" stroke-linecap="round" opacity=".85"><path d="M60 46 L70 66"/><path d="M74 44 L84 66"/><path d="M88 46 L98 66"/><path d="M22 54 L30 72"/><path d="M36 50 L44 70"/></g>`},
+ {k:'feta',n:'Feta cubes',kw:['feta','paneer','cubes','salad cheese','greek'],s:`${SH}<g><path d="M14 58 l18 -8 l18 8 l-18 8z" fill="#ffffff"/><path d="M14 58 l18 8 v20 l-18 -8z" fill="#ecece2"/><path d="M50 58 l-18 8 v20 l18 -8z" fill="#dcdcd0"/></g><g transform="translate(36 -18)"><path d="M14 58 l18 -8 l18 8 l-18 8z" fill="#ffffff"/><path d="M14 58 l18 8 v20 l-18 -8z" fill="#ecece2"/><path d="M50 58 l-18 8 v20 l18 -8z" fill="#dcdcd0"/></g><g transform="translate(54 6)"><path d="M14 58 l18 -8 l18 8 l-18 8z" fill="#ffffff"/><path d="M14 58 l18 8 v20 l-18 -8z" fill="#ecece2"/><path d="M50 58 l-18 8 v20 l18 -8z" fill="#dcdcd0"/></g><g fill="#d6d6c8"><circle cx="30" cy="70" r="1.4"/><circle cx="90" cy="74" r="1.4"/><circle cx="74" cy="50" r="1.2"/></g>`},
+ {k:'goat',n:'Goat\'s cheese log',kw:['goat','goats','chevre','chèvre','capricorn','sainte-maure','sainte maure','crottin','valencay','valençay','golden cross','ragstone','chavroux','ash'],s:`${SH}<rect x="16" y="40" width="70" height="36" rx="18" fill="#f6f6ef"/><path d="M34 40 H70" stroke="#9aa09a" stroke-width="3" stroke-dasharray="2 5"/><ellipse cx="86" cy="58" rx="12" ry="18" fill="#7e857f"/><ellipse cx="92" cy="60" rx="12" ry="18" fill="#fafaf4" stroke="#8a908a" stroke-width="2.5"/><ellipse cx="92" cy="60" rx="7" ry="11" fill="#f1f1e8"/>`},
+ {k:'crumbly',n:'Crumbly (Wensleydale)',kw:['wensleydale','cheshire','lancashire','caerphilly','crumbly','white stilton','cotherstone','dovedale'],s:`${SH}<ellipse cx="58" cy="76" rx="40" ry="12" fill="#e9e0c6"/><rect x="18" y="38" width="80" height="38" fill="#f7f1df"/><ellipse cx="58" cy="38" rx="40" ry="12" fill="#fffbee"/><g stroke="#d9ceaf" stroke-width="1" opacity=".9"><path d="M22 46 H94 M22 54 H94 M22 62 H94 M22 70 H94"/><path d="M28 42 V82 M38 44 V84 M48 46 V86 M58 46 V86 M68 46 V86 M78 44 V84 M88 42 V82"/></g><path d="M58 38 L96 36 Q94 46 70 46Z" fill="#fff6dc"/><g fill="#f0e6c8"><circle cx="40" cy="36" r="2"/><circle cx="74" cy="34" r="1.6"/></g>`},
+ {k:'yarg',n:'Nettle-wrapped (Yarg)',kw:['yarg','nettle','wild garlic','leaf'],s:`${SH}<ellipse cx="60" cy="74" rx="42" ry="13" fill="#9fb28c"/><rect x="18" y="40" width="84" height="34" fill="#b8c7a3"/><ellipse cx="60" cy="40" rx="42" ry="13" fill="#f6f2e2"/><g fill="#4f7a3a"><path d="M24 52 q10 -8 18 4 q-10 8 -18 -4z"/><path d="M44 62 q10 -10 20 2 q-10 10 -20 -2z"/><path d="M66 50 q10 -8 18 4 q-10 8 -18 -4z"/><path d="M84 62 q8 -8 14 2 q-8 8 -14 -2z"/></g><g fill="#3d6a2b"><path d="M38 32 q8 -6 14 3 q-8 6 -14 -3z"/><path d="M64 36 q8 -6 14 3 q-8 6 -14 -3z"/></g>`},
+ {k:'slice',n:'Cheese slices',kw:['slice','slices','american','processed','singles','dairylea','laughing cow','kraft','string','spreadable','triangle'],s:`${SH}<path d="M22 34 L92 26 L100 74 L30 84Z" fill="#f2b81f"/><path d="M16 40 L86 30 Q96 52 94 80 L24 88 Q26 62 16 40Z" fill="#ffd34a"/><path d="M86 30 Q96 52 94 80" stroke="#e8a810" stroke-width="2" fill="none"/>`},
+ {k:'soft',n:'Ricotta / cream cheese',kw:['ricotta','cottage','cream cheese','mascarpone','quark','philadelphia','boursin','fromage frais','labneh','curd'],s:`${SH}<path d="M20 50 L100 50 L92 86 L28 86Z" fill="#7fb3d5"/><path d="M20 50 L100 50 L98 58 L22 58Z" fill="#5d9ac4"/><path d="M22 50 Q30 34 44 42 Q52 28 64 40 Q76 30 84 42 Q96 38 98 50Z" fill="#fffdf6"/><g fill="#f1ede0"><circle cx="40" cy="46" r="3"/><circle cx="62" cy="44" r="3.5"/><circle cx="80" cy="46" r="3"/></g>`},
+ {k:'wedge',n:'Classic wedge',kw:[],s:`${SH}<path d="M14 50 L96 28 L110 40 L28 64Z" fill="#ffe27a"/><path d="M14 50 L28 64 L28 88 L14 74Z" fill="#f4bb2c"/><path d="M28 64 L110 40 L110 66 L28 88Z" fill="#f8c93a"/><g fill="#e8a51a"><ellipse cx="48" cy="72" rx="5" ry="6"/><ellipse cx="78" cy="62" rx="6" ry="5"/><ellipse cx="96" cy="58" rx="3" ry="3.5"/><ellipse cx="62" cy="50" rx="4" ry="2"/></g>`}
+];
+const IC=Object.fromEntries(ICONS.map(i=>[i.k,i]));
+{const d=document.createElementNS('http://www.w3.org/2000/svg','svg');d.setAttribute('width','0');d.setAttribute('height','0');d.style.position='absolute';d.setAttribute('aria-hidden','true');
+ d.innerHTML=ICONS.map(i=>`<symbol id="ic-${i.k}" viewBox="0 0 120 100">${i.s}</symbol>`).join('');document.body.prepend(d)}
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[’']/g,"'");
+function matchIcon(name){
+ const n=norm(name);let best='wedge',score=0;
+ for(const i of ICONS)for(const k of i.kw){const kk=norm(k);if(kk&&n.includes(kk)&&kk.length>score){best=i.k;score=kk.length}}
+ return best;
+}
+const iconOf=p=>p&&p.icon&&IC[p.icon]?p.icon:matchIcon(p?p.cheese:'');
+const ico=(k,cls='ico')=>`<svg class="${cls}" viewBox="0 0 120 100" aria-hidden="true"><use href="#ic-${k}"/></svg>`;
+
 const SAMPLE=[['Alex','Stilton'],['Priya','Comté'],['Tom','Manchego'],['Grace','Gorgonzola'],['Sam','Red Leicester'],['Olu','Brie de Meaux'],['Mei','Wensleydale'],['Jack','Gouda'],['Hannah','Halloumi'],['Luis','Roquefort'],['Beth','Cornish Yarg']];
 
 let S=load()||{phase:'setup',players:[],rounds:[],champion:null};
@@ -329,7 +430,8 @@ function addPlayer(name,cheese){name=name.trim();cheese=cheese.trim();if(!name||
 $('addForm').addEventListener('submit',e=>{e.preventDefault();addPlayer($('inName').value,$('inCheese').value);$('inName').value='';$('inCheese').value='';$('inName').focus()});
 $('sampleBtn').onclick=()=>{const have=new Set(S.players.map(p=>p.name));SAMPLE.filter(([n])=>!have.has(n)).forEach(([n,c])=>addPlayer(n,c))};
 $('clearBtn').onclick=()=>{if(!S.players.length)return;ask('Remove all competitors from the list?',()=>{S.players=[];save();render()})};
-$('plist').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;S.players=S.players.filter(p=>p.id!==b.dataset.rm);save();render()});
+$('plist').addEventListener('click',e=>{const pk=e.target.closest('[data-pick]');if(pk){openGallery(pk.dataset.pick);return}const b=e.target.closest('[data-rm]');if(!b)return;S.players=S.players.filter(p=>p.id!==b.dataset.rm);save();render()});
+$('howBtn').onclick=()=>{const el=$('howItWorks');const r=matchMedia('(prefers-reduced-motion: reduce)').matches;el.scrollIntoView({behavior:r?'auto':'smooth',block:'start'});el.focus({preventScroll:true})};
 $('startBtn').onclick=()=>{if(S.players.length<5)return;snap();buildBracket();save();render()};
 
 function roundName(n){return n===1?'Cheese World Cup Final':n===2?'Semi final':n===4?'Quarter final':'Round of '+n*2+' game'}
@@ -370,8 +472,8 @@ function render(){
  $('vChamp').classList.toggle('hidden',!champ);
  const t=$('tools');
  if(setup){
-  t.innerHTML='';$('status').textContent='The knockout tasting championship';
-  $('plist').innerHTML=S.players.map((p,i)=>`<li><b>${i+1}. ${esc(p.name)}</b><span>${esc(p.cheese)}</span><button data-rm="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">Remove</button></li>`).join('');
+  t.innerHTML=`<button class="ghost" id="tGal">Cheese gallery</button>`;$('tGal').onclick=()=>openGallery();$('status').textContent='The knockout tasting championship';
+  $('plist').innerHTML=S.players.map((p,i)=>`<li><button class="icbtn" data-pick="${esc(p.id)}" aria-label="Change the picture for ${esc(p.cheese)}" title="${esc(IC[iconOf(p)].n)}: tap to change">${ico(iconOf(p))}</button><b>${i+1}. ${esc(p.cheese)}</b><span>${esc(p.name)}</span><button class="rm" data-rm="${esc(p.id)}" aria-label="Remove ${esc(p.name)}" title="Remove ${esc(p.name)}">−</button></li>`).join('');
   const n=S.players.length;
   if(n<5)$('countNote').textContent=`${n} competitor${n===1?'':'s'}. You need at least 5, so every game has 3 judges who aren't playing.`;
   else{const b=2**Math.ceil(Math.log2(n))-n;$('countNote').textContent=`${n} competitors. ${b?b+' will get a bye into round two.':'A perfect draw, no byes needed.'}`}
@@ -379,7 +481,8 @@ function render(){
   return;
  }
  const next=nextMatch();
- t.innerHTML=(next?`<button id="tNext">Play next game</button>`:'')+(S.phase==='done'&&S.showBoard?`<button id="tChamp">Show champion</button>`:'')+`<button class="ghost" id="tUndo" ${history.length?'':'disabled'}>Undo</button><button class="ghost" id="tNew">New tournament</button>`;
+ t.innerHTML=(next?`<button id="tNext">Play next game</button>`:'')+(S.phase==='done'&&S.showBoard?`<button id="tChamp">Show champion</button>`:'')+`<button class="ghost" id="tUndo" ${history.length?'':'disabled'}>Undo</button><button class="ghost" id="tGal">Cheese gallery</button><button class="ghost" id="tNew">New tournament</button>`;
+ $('tGal').onclick=()=>openGallery();
  if(next)$('tNext').onclick=()=>openStage(next[0],next[1]);
  if($('tChamp'))$('tChamp').onclick=()=>{S.showBoard=false;save();render();celebrate()};
  $('tUndo').onclick=undo;$('tNew').onclick=newTournament;
@@ -406,14 +509,14 @@ function render(){
  $('rota').innerHTML=S.players.slice().sort((a,b)=>c[a.id]-c[b.id]||a.name.localeCompare(b.name)).map(p=>`<span class="chip ${out.has(p.id)?'out':''}">${esc(p.name)}${out.has(p.id)?' (out)':''} <b>${c[p.id]}×</b></span>`).join('');
 
  if(champ){const w=P(S.champion),f=S.rounds.at(-1)[0],vs=Object.values(f.votes),ta=vs.filter(v=>v==='a').length,tb=vs.filter(v=>v==='b').length;
-  $('champCheese').textContent=w.cheese;$('champBy').textContent='brought by '+w.name;
+  $('champCheese').textContent=w.cheese;{const t=$('champName');t.textContent=w.name.toUpperCase();t.removeAttribute('textLength');t.removeAttribute('lengthAdjust');try{if(t.getComputedTextLength()>124){t.setAttribute('textLength','124');t.setAttribute('lengthAdjust','spacingAndGlyphs')}}catch(e){}}
   $('champScore').textContent=`Final vote ${Math.max(ta,tb)}–${Math.min(ta,tb)}${f.tieBreak?', tie broken by the host':''}`}
 }
 function slot(m,side,r,i){
  const id=m[side];
  const lab=r>0?shortName(S.rounds[r-1].length,2*i+(side==='b'?1:0)):'';
  let inner;
- if(id){const p=P(id),cls=m.winner?(m.winner===id?'win':'lose'):'';inner=`<span class="s ${cls}">${esc(p.cheese)}<small>${esc(p.name)}</small></span>`}
+ if(id){const p=P(id),cls=m.winner?(m.winner===id?'win':'lose'):'';inner=`<span class="s ${cls}">${ico(iconOf(p))}<span class="tx"><span class="ch">${esc(p.cheese)}</span><span class="dash">–</span><small>${esc(p.name)}</small></span></span>`}
  else inner=`<span class="s empty">${m.bye&&side==='b'?'Bye':'&nbsp;'}</span>`;
  return`<div class="slot">${lab?`<i>${esc(lab)}</i>`:''}${inner}</div>`;
 }
@@ -439,7 +542,7 @@ function drawStage(){
   const head=m.final?esc(p.name):`Judge ${k+1} · ${esc(p.name)}`;
   const sub=m.final?(fin?'finalist':''):`judged ${c[id]}×`;
   return`<div class="j box"><div class="bar"><span>${head}</span><small>${sub}</small></div><div class="pad"><div class="btns"><button data-v="${esc(id)}" data-s="a" class="${m.votes[id]==='a'?'on':''}">${esc(A.cheese)}</button><button data-v="${esc(id)}" data-s="b" class="${m.votes[id]==='b'?'on':''}">${esc(B.cheese)}</button></div>${swap}</div></div>`};
- const side=(p,n)=>`<div class="side-c box"><div class="bar">${esc(p.name)}</div><div class="pad"><div class="slotbig">${esc(p.cheese)}</div><div class="count">${n}<small>vote${n===1?'':'s'}</small></div></div></div>`;
+ const side=(p,n)=>`<div class="side-c box"><div class="bar">${esc(p.name)}</div><div class="pad">${ico(iconOf(p),'bigico')}<div class="slotbig">${esc(p.cheese)}</div><div class="count">${n}<small>vote${n===1?'':'s'}</small></div></div></div>`;
  let action;
  if(tie)action=`<div class="banner box">It's a tie at ${ta}–${tb}. Host, pick the champion:</div><div class="foot"><button data-win="a">${esc(A.cheese)}</button><button data-win="b">${esc(B.cheese)}</button><button class="ghost" id="close">Back to the draw</button></div>`;
  else if(m.final)action=`<div class="foot"><button id="confirm" ${allIn?'':'disabled'}>${allIn?'Crown the champion':`Waiting for votes (${vs.length} of ${voters.length})`}</button><button class="ghost" id="close">Back to the draw</button></div>`;
@@ -466,18 +569,108 @@ function finish(r,i,winner){
  advance(r,i);S.showBoard=false;save();openMatch=null;$('stage').classList.add('hidden');render();
  if(S.phase==='done')celebrate();
 }
+
+/* ---------- gallery ---------- */
+let galFor=null;
+function openGallery(pid){galFor=pid||null;drawGallery();$('gal').classList.remove('hidden');$('gal').scrollTop=0}
+function closeGallery(){galFor=null;$('gal').classList.add('hidden');render()}
+function drawGallery(){
+ const p=galFor?P(galFor):null,cur=p?iconOf(p):null,auto=p?matchIcon(p.cheese):null;
+ const grid=`<div class="galgrid">${ICONS.map(i=>`<button class="gcard ${cur===i.k?'on':''}" type="button" data-ic="${i.k}" ${p?'':'tabindex="-1"'}>${ico(i.k)}<b>${esc(i.n)}</b><small>${i.kw.length?esc(i.kw.slice(0,4).join(', ')):'Used when nothing else matches'}</small></button>`).join('')}</div>`;
+ let top;
+ if(p)top=`<p class="lead">Pick the picture for <b>${esc(p.name)}</b>'s <b>${esc(p.cheese)}</b>.</p><div class="foot" style="margin:0 0 18px"><button id="gAuto">Use automatic match (${esc(IC[auto].n)})</button><button class="ghost" id="gBack">Back</button></div>`;
+ else top=`<p class="lead">Every cheese gets a picture automatically from its name. Tap Change to pick a different one.</p>`+
+  (S.players.length?`<h3>Your competitors' cheeses</h3><div class="galplayers">${S.players.map(q=>`<div class="gp">${ico(iconOf(q))}<span class="t">${esc(q.cheese)}<small>${esc(q.name)} · ${esc(IC[iconOf(q)].n)}${q.icon?' (chosen)':''}</small></span><button data-chg="${esc(q.id)}">Change</button></div>`).join('')}</div>`:'')+`<h3>All cheese pictures</h3>`;
+ $('gal').innerHTML=`<h2 class="bar">Cheese gallery</h2><div class="inner ${p?'pick':''}">${top}${grid}<div class="foot"><button class="ghost" id="gClose">Close gallery</button></div></div>`;
+}
+$('gal').addEventListener('click',e=>{
+ if(e.target.id==='gClose')return closeGallery();
+ if(e.target.id==='gBack'){galFor=null;drawGallery();return}
+ const ch=e.target.closest('[data-chg]');if(ch){galFor=ch.dataset.chg;drawGallery();$('gal').scrollTop=0;return}
+ const p=galFor&&P(galFor);if(!p)return;
+ if(e.target.id==='gAuto'){delete p.icon;save();galFor=null;drawGallery();return}
+ const c=e.target.closest('[data-ic]');if(c){p.icon=c.dataset.ic;save();galFor=null;drawGallery()}
+});
 function undo(){if(!history.length)return;S=JSON.parse(history.pop());save();openMatch=null;$('stage').classList.add('hidden');render()}
 function newTournament(){ask('Start a new tournament? The draw will be cleared, but the competitor list is kept.',()=>{snap();S.phase='setup';S.rounds=[];S.champion=null;S.showBoard=false;save();render()})}
 $('newBtn2').onclick=newTournament;
+$('celebrateBtn').onclick=()=>celebrate();
 $('seeBracket').onclick=()=>{S.showBoard=true;save();render()};
 
+/* ---------- celebration: confetti, fireworks, fanfare ---------- */
+let celebrateTimers=[];
 function celebrate(){
+ celebrateTimers.forEach(clearTimeout);celebrateTimers=[];
+ fanfare();
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- const box=$('confetti'),cols=['#ffff00','#339966','#ffd21f','#f0a000','#ffffff'];
- box.innerHTML=Array.from({length:130},()=>`<i style="left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s;box-shadow:0 0 0 1px rgba(0,0,0,.06)"></i>`).join('');
- setTimeout(()=>box.innerHTML='',6500);
+ confettiBurst(0);celebrateTimers.push(setTimeout(()=>confettiBurst(1),1400),setTimeout(()=>confettiBurst(2),2900),setTimeout(()=>confettiBurst(3),4600));
+ celebrateTimers.push(setTimeout(()=>$('confetti').innerHTML='',12000));
+ fireworks(8000);
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&openMatch)closeStage()});
+function confettiBurst(w){
+ const box=$('confetti'),cols=['#ffcc33','#fff7d6','#f7a21b','#e63946','#ffffff','#2fbf71','#3fa9f5'];
+ const html=Array.from({length:170},()=>{const c=cols[Math.floor(Math.random()*cols.length)],k=Math.random(),
+  sz=k<.33?'width:8px;height:16px':k<.66?'width:12px;height:12px;border-radius:50%':'width:14px;height:10px';
+  return`<i style="left:${Math.random()*100}%;${sz};background:${c};animation-duration:${3+Math.random()*3.5}s;animation-delay:${Math.random()*1.2}s;transform:rotate(${Math.random()*360}deg)"></i>`}).join('');
+ box.insertAdjacentHTML('beforeend',`<span data-w="${w}">${html}</span>`);
+ celebrateTimers.push(setTimeout(()=>{const n=box.querySelector(`[data-w="${w}"]`);if(n)n.remove()},8500));
+}
+let fwRun=0;
+function fireworks(ms){
+ const cv=$('fw'),ctx=cv.getContext('2d'),dpr=Math.min(2,window.devicePixelRatio||1);
+ const size=()=>{cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)};size();
+ const cols=['#ffcc33','#ff8a1f','#e63946','#ffffff','#2fbf71','#3fa9f5','#ff5ec4','#fff27a'];
+ const rockets=[],sparks=[],end=performance.now()+ms,id=++fwRun;let next=0;
+ cv.style.display='block';
+ function launch(){const x=innerWidth*(.12+Math.random()*.76);rockets.push({x,y:innerHeight+10,vx:(Math.random()-.5)*1.5,vy:-(innerHeight*.012+6+Math.random()*3),ty:innerHeight*(.12+Math.random()*.38),c:cols[Math.floor(Math.random()*cols.length)]})}
+ function burst(r){const n=70+Math.floor(Math.random()*50),sp=3+Math.random()*3.5,two=Math.random()<.4?cols[Math.floor(Math.random()*cols.length)]:null;
+  for(let i=0;i<n;i++){const a=Math.PI*2*i/n+Math.random()*.1,v=sp*(.55+Math.random()*.45);sparks.push({x:r.x,y:r.y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:1,d:.011+Math.random()*.01,c:two&&i%2?two:r.c})}
+  pop()}
+ function frame(t){
+  if(id!==fwRun)return;
+  ctx.globalCompositeOperation='destination-out';ctx.fillStyle='rgba(0,0,0,.22)';ctx.fillRect(0,0,innerWidth,innerHeight);
+  ctx.globalCompositeOperation='lighter';
+  if(t<end&&t>next){launch();if(Math.random()<.35)launch();next=t+380+Math.random()*420}
+  for(let i=rockets.length-1;i>=0;i--){const r=rockets[i];r.x+=r.vx;r.y+=r.vy;r.vy+=.12;
+   ctx.fillStyle='#fff3c4';ctx.beginPath();ctx.arc(r.x,r.y,2.4,0,7);ctx.fill();
+   if(r.y<=r.ty||r.vy>=0){burst(r);rockets.splice(i,1)}}
+  for(let i=sparks.length-1;i>=0;i--){const p=sparks[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.985;p.vy=p.vy*.985+.05;p.life-=p.d;
+   if(p.life<=0){sparks.splice(i,1);continue}
+   ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,2.2,0,7);ctx.fill()}
+  ctx.globalAlpha=1;
+  if(t<end||rockets.length||sparks.length)requestAnimationFrame(frame);
+  else{ctx.clearRect(0,0,innerWidth,innerHeight);cv.style.display='none'}
+ }
+ requestAnimationFrame(frame);
+}
+/* trumpet fanfare, synthesised with Web Audio (no sound files needed) */
+let AC=null;
+function audio(){try{if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;AC=new C()}if(AC.state==='suspended')AC.resume();return AC}catch(e){return null}}
+function brass(ac,out,f,t0,dur,vol){
+ const g=ac.createGain(),lp=ac.createBiquadFilter();lp.type='lowpass';lp.Q.value=2;
+ lp.frequency.setValueAtTime(500,t0);lp.frequency.exponentialRampToValueAtTime(3200,t0+.06);lp.frequency.exponentialRampToValueAtTime(1800,t0+Math.max(.1,dur));
+ g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+.035);g.gain.setValueAtTime(vol*.8,t0+Math.max(.05,dur-.06));g.gain.exponentialRampToValueAtTime(0.0001,t0+dur+.12);
+ lp.connect(g);g.connect(out);
+ [0,-6,7].forEach(cents=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=f;o.detune.value=cents;
+  if(dur>.5){const lfo=ac.createOscillator(),lg=ac.createGain();lfo.frequency.value=5.5;lg.gain.setValueAtTime(0,t0);lg.gain.linearRampToValueAtTime(9,t0+dur);lfo.connect(lg);lg.connect(o.detune);lfo.start(t0);lfo.stop(t0+dur+.15)}
+  o.connect(lp);o.start(t0);o.stop(t0+dur+.15)});
+}
+function fanfare(){
+ const ac=audio();if(!ac)return;
+ const out=ac.createGain();out.gain.value=.5;
+ const rv=ac.createDelay();rv.delayTime.value=.11;const fb=ac.createGain();fb.gain.value=.25;out.connect(ac.destination);out.connect(rv);rv.connect(fb);fb.connect(rv);rv.connect(ac.destination);
+ const N={G4:392,C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99,B4:493.88,A4:440};
+ const tune=[['G4',.13],['G4',.13],['G4',.13],['C5',.55],[0,.06],['G4',.18],['C5',.18],['E5',.18],['G5',.6],[0,.05],['E5',.16],['G5',1.3]];
+ let t=ac.currentTime+.05;
+ for(const [n,d] of tune){if(n){brass(ac,out,N[n],t,d*.92,.16)}t+=d}
+ const ct=t-1.3;brass(ac,out,N.C5,ct,1.3,.09);brass(ac,out,329.63,ct,1.3,.08);
+}
+function pop(){const ac=AC;if(!ac||ac.state!=='running')return;try{
+ const n=ac.createBufferSource(),len=ac.sampleRate*.35,buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);
+ for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);
+ const g=ac.createGain(),f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=900+Math.random()*900;g.gain.value=.12;
+ n.buffer=buf;n.connect(f);f.connect(g);g.connect(ac.destination);n.start()}catch(e){}}
+document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!$('gal').classList.contains('hidden'))return closeGallery();if(openMatch)closeStage()});
 const mq=matchMedia('(max-width:760px)');function isPhone(){return mq.matches}
 try{mq.addEventListener('change',()=>{if(S.phase!=='setup')render()})}catch(e){}
 render();
